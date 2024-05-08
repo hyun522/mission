@@ -1,5 +1,9 @@
-function App() {
-  return <></>;
-}
+import ToDoList from './components/ToDoList';
 
-export default App;
+export default function App() {
+  return (
+    <>
+      <ToDoList />
+    </>
+  );
+}
