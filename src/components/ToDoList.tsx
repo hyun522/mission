@@ -24,6 +24,19 @@ const Top = styled.div`
   margin-bottom: 50px;
 `;
 
+const ListsBox = styled.div`
+  height: 45dvb;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+`;
+
+const AllListsBox = styled.div``;
+
+const CheckListsBox = styled.div`
+  height: 20dvb;
+`;
+
 const TextListsDiv = styled.div`
   display: flex;
   justify-content: space-between;
@@ -158,10 +171,14 @@ export default function ToDoList() {
     SetTextList(copyList);
   };
 
-  const handleCheck = (index: number) => {
-    const copyList = [...textList];
-    copyList[index].check = !copyList[index].check;
-    SetTextList(copyList);
+  const handleCheck = (text: string) => {
+    const updatedList = textList.map((el) => {
+      if (el.text === text) {
+        return { ...el, check: !el.check };
+      }
+      return el;
+    });
+    SetTextList(updatedList);
   };
 
   const handleMouseOut = (index: number) => {
@@ -183,33 +200,73 @@ export default function ToDoList() {
           <DateBox>{formattdDate}</DateBox>
           <DayBox>{formattdDay}</DayBox>
         </Top>
-        {textList.map((el, index) => (
-          <>
-            <TextListsDiv>
-              <CheckTextBox>
-                <CheckInput
-                  type='checkbox'
-                  checked={el.check}
-                  onChange={() => handleCheck(index)}
-                />
-                {el.check ? (
-                  <CheckedTextList key={index}>{el.text}</CheckedTextList>
-                ) : (
-                  <TextList key={index}>{el.text}</TextList>
-                )}
-              </CheckTextBox>
-              <div
-                onMouseOver={() => handleMouseOver(index)}
-                onMouseOut={() => handleMouseOut(index)}
-              >
-                <FaTrashAlt
-                  color={el.hover ? 'red' : '#666'}
-                  onClick={() => handleDelete(index)}
-                />
-              </div>
-            </TextListsDiv>
-          </>
-        ))}
+        <ListsBox>
+          <AllListsBox>
+            {textList
+              .filter((el) => !el.check)
+              .map((el, index) => (
+                <>
+                  <TextListsDiv>
+                    <CheckTextBox>
+                      <CheckInput
+                        type='checkbox'
+                        checked={el.check}
+                        onChange={() => handleCheck(el.text)}
+                      />
+                      {el.check ? (
+                        <CheckedTextList key={index}>{el.text}</CheckedTextList>
+                      ) : (
+                        <TextList key={index}>{el.text}</TextList>
+                      )}
+                    </CheckTextBox>
+                    <div
+                      onMouseOver={() => handleMouseOver(index)}
+                      onMouseOut={() => handleMouseOut(index)}
+                    >
+                      <FaTrashAlt
+                        color={el.hover ? 'red' : '#666'}
+                        onClick={() => handleDelete(index)}
+                      />
+                    </div>
+                  </TextListsDiv>
+                </>
+              ))}
+          </AllListsBox>
+          <CheckListsBox>
+            {textList.some((el) => el.check) && (
+              <p style={{ marginBottom: '10px' }}>👍 완료</p>
+            )}
+            {textList
+              .filter((el) => el.check)
+              .map((el, index) => (
+                <>
+                  <TextListsDiv>
+                    <CheckTextBox>
+                      <CheckInput
+                        type='checkbox'
+                        checked={el.check}
+                        onChange={() => handleCheck(el.text)}
+                      />
+                      {el.check ? (
+                        <CheckedTextList key={index}>{el.text}</CheckedTextList>
+                      ) : (
+                        <TextList key={index}>{el.text}</TextList>
+                      )}
+                    </CheckTextBox>
+                    <div
+                      onMouseOver={() => handleMouseOver(index)}
+                      onMouseOut={() => handleMouseOut(index)}
+                    >
+                      <FaTrashAlt
+                        color={el.hover ? 'red' : '#666'}
+                        onClick={() => handleDelete(index)}
+                      />
+                    </div>
+                  </TextListsDiv>
+                </>
+              ))}
+          </CheckListsBox>
+        </ListsBox>
         {input ? (
           <>
             <ListMinusButton onClick={() => handleMinusInput()}>
