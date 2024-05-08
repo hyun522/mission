@@ -29,11 +29,23 @@ const TextListsDiv = styled.div`
   justify-content: space-between;
 `;
 
+const CheckTextBox = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+`;
+
+const CheckInput = styled.input`
+  margin-right: 5px;
+`;
+
 const TextList = styled.div`
-  background-color: pink;
   color: #666;
   font-size: 18px;
-  margin-bottom: 5px;
+`;
+
+const CheckedTextList = styled(TextList)`
+  color: #e3e7eb;
 `;
 
 const DateBox = styled.div`
@@ -107,9 +119,9 @@ const AddInput = styled.input`
 export default function ToDoList() {
   const [input, SetInput] = useState<boolean>(false);
   const [text, SetText] = useState('');
-  const [textList, SetTextList] = useState<{ text: string; hover: boolean }[]>(
-    [],
-  );
+  const [textList, SetTextList] = useState<
+    { text: string; hover: boolean; check: boolean }[]
+  >([]);
   const today = new Date();
   const formattdDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
   const week = ['일', '월', '화', '수', '목', '금', '토'];
@@ -133,7 +145,7 @@ export default function ToDoList() {
   };
 
   const handleTextList = (text: string) => {
-    const newItem = { text: text, hover: false };
+    const newItem = { text: text, hover: false, check: false };
     const copyList = [...textList, newItem];
     console.log(copyList);
     SetTextList(copyList);
@@ -143,6 +155,12 @@ export default function ToDoList() {
   const handleMouseOver = (index: number) => {
     const copyList = [...textList];
     copyList[index].hover = true;
+    SetTextList(copyList);
+  };
+
+  const handleCheck = (index: number) => {
+    const copyList = [...textList];
+    copyList[index].check = !copyList[index].check;
     SetTextList(copyList);
   };
 
@@ -166,18 +184,31 @@ export default function ToDoList() {
           <DayBox>{formattdDay}</DayBox>
         </Top>
         {textList.map((el, index) => (
-          <TextListsDiv>
-            <TextList key={index}>{el.text}</TextList>
-            <div
-              onMouseOver={() => handleMouseOver(index)}
-              onMouseOut={() => handleMouseOut(index)}
-            >
-              <FaTrashAlt
-                color={el.hover ? 'red' : '#666'}
-                onClick={() => handleDelete(index)}
-              />
-            </div>
-          </TextListsDiv>
+          <>
+            <TextListsDiv>
+              <CheckTextBox>
+                <CheckInput
+                  type='checkbox'
+                  checked={el.check}
+                  onChange={() => handleCheck(index)}
+                />
+                {el.check ? (
+                  <CheckedTextList key={index}>{el.text}</CheckedTextList>
+                ) : (
+                  <TextList key={index}>{el.text}</TextList>
+                )}
+              </CheckTextBox>
+              <div
+                onMouseOver={() => handleMouseOver(index)}
+                onMouseOut={() => handleMouseOut(index)}
+              >
+                <FaTrashAlt
+                  color={el.hover ? 'red' : '#666'}
+                  onClick={() => handleDelete(index)}
+                />
+              </div>
+            </TextListsDiv>
+          </>
         ))}
         {input ? (
           <>
