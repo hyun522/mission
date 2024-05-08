@@ -20,7 +20,16 @@ const MainBox = styled.div`
 
 const Top = styled.div`
   width: 100%;
+  margin-bottom: 50px;
 `;
+
+const TextList = styled.div`
+  background-color: pink;
+  color: #666;
+  font-size: 18px;
+  margin-bottom: 5px;
+`;
+
 const DateBox = styled.div`
   font-size: 30px;
 `;
@@ -55,6 +64,7 @@ const ListAddButton = styled.button`
   bottom: -35px;
   cursor: pointer;
 `;
+
 const ListMinusButton = styled(ListAddButton)`
   background-color: #fe787b;
   font-size: 45px;
@@ -76,28 +86,48 @@ const InputBox = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
 const AddInput = styled.input`
   margin-bottom: 20px;
-  width: 20dvw;
+  width: 60%;
   padding: 5px;
   border: 1px solid #ccc;
+
   &:focus {
     outline: none;
   }
 `;
 
 export default function ToDoList() {
-  const [input, SetInput] = useState<null | string>(null);
+  const [input, SetInput] = useState<boolean>(false);
+  const [text, SetText] = useState('');
+  const [textList, SetTextList] = useState<string[]>([]);
   const today = new Date();
   const formattdDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
   const week = ['일', '월', '화', '수', '목', '금', '토'];
   const formattdDay = `${week[today.getDay()]}요일`;
 
   const handlePlusInput = () => {
-    SetInput('ok');
+    SetInput(true);
   };
   const handleMinusInput = () => {
-    SetInput(null);
+    SetInput(false);
+  };
+
+  const handleText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    SetText(e.target.value);
+  };
+
+  const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleTextList(text);
+    }
+  };
+
+  const handleTextList = (text: string) => {
+    const copyList = [...textList, text];
+    SetTextList(copyList);
+    SetText('');
   };
 
   return (
@@ -107,14 +137,22 @@ export default function ToDoList() {
           <DateBox>{formattdDate}</DateBox>
           <DayBox>{formattdDay}</DayBox>
         </Top>
-        <div></div>
+        {textList.map((el, index) => (
+          <TextList key={index}>{el}</TextList>
+        ))}
+
         {input ? (
           <>
             <ListMinusButton onClick={() => handleMinusInput()}>
               x
             </ListMinusButton>
             <InputBox>
-              <AddInput placeholder='할일을 입력해 주세요.' />
+              <AddInput
+                placeholder='할일을 입력 후 Enter를 누르세요.'
+                onChange={(e) => handleText(e)}
+                onKeyDown={(e) => activeEnter(e)}
+                value={text}
+              />
             </InputBox>
           </>
         ) : (
