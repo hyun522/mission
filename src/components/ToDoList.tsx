@@ -127,7 +127,7 @@ export default function ToDoList() {
   };
 
   const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && e.nativeEvent.isComposing === false) {
       handleTextList(text);
     }
   };
