@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaTrashAlt } from 'react-icons/fa';
 import styled from 'styled-components';
 
 const Bg = styled.div`
@@ -21,6 +22,11 @@ const MainBox = styled.div`
 const Top = styled.div`
   width: 100%;
   margin-bottom: 50px;
+`;
+
+const TextListsDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const TextList = styled.div`
@@ -101,7 +107,9 @@ const AddInput = styled.input`
 export default function ToDoList() {
   const [input, SetInput] = useState<boolean>(false);
   const [text, SetText] = useState('');
-  const [textList, SetTextList] = useState<string[]>([]);
+  const [textList, SetTextList] = useState<{ text: string; hover: boolean }[]>(
+    [],
+  );
   const today = new Date();
   const formattdDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
   const week = ['일', '월', '화', '수', '목', '금', '토'];
@@ -125,9 +133,29 @@ export default function ToDoList() {
   };
 
   const handleTextList = (text: string) => {
-    const copyList = [...textList, text];
+    const newItem = { text: text, hover: false };
+    const copyList = [...textList, newItem];
+    console.log(copyList);
     SetTextList(copyList);
     SetText('');
+  };
+
+  const handleMouseOver = (index: number) => {
+    const copyList = [...textList];
+    copyList[index].hover = true;
+    SetTextList(copyList);
+  };
+
+  const handleMouseOut = (index: number) => {
+    const copyList = [...textList];
+    copyList[index].hover = false;
+    SetTextList(copyList);
+  };
+
+  const handleDelete = (index: number) => {
+    const copyList = [...textList];
+    copyList.splice(index, 1);
+    SetTextList(copyList);
   };
 
   return (
@@ -138,9 +166,19 @@ export default function ToDoList() {
           <DayBox>{formattdDay}</DayBox>
         </Top>
         {textList.map((el, index) => (
-          <TextList key={index}>{el}</TextList>
+          <TextListsDiv>
+            <TextList key={index}>{el.text}</TextList>
+            <div
+              onMouseOver={() => handleMouseOver(index)}
+              onMouseOut={() => handleMouseOut(index)}
+            >
+              <FaTrashAlt
+                color={el.hover ? 'red' : '#666'}
+                onClick={() => handleDelete(index)}
+              />
+            </div>
+          </TextListsDiv>
         ))}
-
         {input ? (
           <>
             <ListMinusButton onClick={() => handleMinusInput()}>
