@@ -141,7 +141,7 @@ export default function ToDoList() {
   const [input, setInput] = useState<boolean>(false);
   const [text, setText] = useState('');
   const [todoList, setTodoList] = useState<
-    { id: number; text: string; hover: boolean; check: boolean }[]
+    { id: number; text: string; check: boolean }[]
   >([]);
 
   const handlePlusMinusInput = (item: boolean) => {
@@ -162,7 +162,6 @@ export default function ToDoList() {
     const newItem = {
       id: Math.floor(Math.random() * 1000),
       text: text,
-      hover: false,
       check: false,
     };
     const copyList = [...todoList, newItem];
