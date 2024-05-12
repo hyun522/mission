@@ -154,11 +154,11 @@ export default function ToDoList() {
 
   const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && e.nativeEvent.isComposing === false) {
-      handleTextList(text);
+      handleListAddText(text);
     }
   };
 
-  const handleTextList = (text: string) => {
+  const handleListAddText = (text: string) => {
     const newItem = {
       id: Math.floor(Math.random() * 1000),
       text: text,
