@@ -169,7 +169,7 @@ export default function ToDoList() {
     setText('');
   };
 
-  const handleCheck = (index: number) => {
+  const handleToggleCheck = (index: number) => {
     const updatedList = todoList.map((el) => {
       if (el.id === index) {
         return { ...el, check: !el.check };
@@ -196,23 +196,21 @@ export default function ToDoList() {
             {todoList
               .filter((el) => !el.check)
               .map((el) => (
-                <>
-                  <TextListsDiv key={el.id}>
-                    <CheckTextBox>
-                      <CheckInput
-                        type='checkbox'
-                        checked={el.check}
-                        onChange={() => handleCheck(el.id)}
-                      />
-                      {el.check ? (
-                        <CheckedTextList>{el.text}</CheckedTextList>
-                      ) : (
-                        <TextList>{el.text}</TextList>
-                      )}
-                    </CheckTextBox>
-                    <TrashAlt onClick={() => handleDelete(el.id)} />
-                  </TextListsDiv>
-                </>
+                <TextListsDiv key={el.id}>
+                  <CheckTextBox>
+                    <CheckInput
+                      type='checkbox'
+                      checked={el.check}
+                      onChange={() => handleToggleCheck(el.id)}
+                    />
+                    {el.check ? (
+                      <CheckedTextList>{el.text}</CheckedTextList>
+                    ) : (
+                      <TextList>{el.text}</TextList>
+                    )}
+                  </CheckTextBox>
+                  <TrashAlt onClick={() => handleDelete(el.id)} />
+                </TextListsDiv>
               ))}
           </AllListsBox>
           <CheckListsBox>
@@ -222,23 +220,21 @@ export default function ToDoList() {
             {todoList
               .filter((el) => el.check)
               .map((el) => (
-                <>
-                  <TextListsDiv key={el.id}>
-                    <CheckTextBox>
-                      <CheckInput
-                        type='checkbox'
-                        checked={el.check}
-                        onChange={() => handleCheck(el.id)}
-                      />
-                      {el.check ? (
-                        <CheckedTextList>{el.text}</CheckedTextList>
-                      ) : (
-                        <TextList key={el.id}>{el.text}</TextList>
-                      )}
-                    </CheckTextBox>
-                    <TrashAlt onClick={() => handleDelete(el.id)} />
-                  </TextListsDiv>
-                </>
+                <TextListsDiv key={el.id}>
+                  <CheckTextBox>
+                    <CheckInput
+                      type='checkbox'
+                      checked={el.check}
+                      onChange={() => handleToggleCheck(el.id)}
+                    />
+                    {el.check ? (
+                      <CheckedTextList>{el.text}</CheckedTextList>
+                    ) : (
+                      <TextList key={el.id}>{el.text}</TextList>
+                    )}
+                  </CheckTextBox>
+                  <TrashAlt onClick={() => handleDelete(el.id)} />
+                </TextListsDiv>
               ))}
           </CheckListsBox>
         </ListsBox>
