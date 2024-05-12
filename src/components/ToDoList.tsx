@@ -131,11 +131,15 @@ const AddInput = styled.input`
 `;
 
 export default function ToDoList() {
+  // const id =
   const [input, setInput] = useState<boolean>(false);
   const [text, setText] = useState('');
   const [todoList, setTodoList] = useState<
-    { text: string; hover: boolean; check: boolean }[]
+    { id: number; text: string; hover: boolean; check: boolean }[]
   >([]);
+  console.log(todoList);
+  console.log(text);
+  console.log(input);
 
   const handlePlusMinusInput = (item: boolean) => {
     setInput(item);
@@ -152,7 +156,12 @@ export default function ToDoList() {
   };
 
   const handleTextList = (text: string) => {
-    const newItem = { text: text, hover: false, check: false };
+    const newItem = {
+      id: Math.floor(Math.random() * 1000),
+      text: text,
+      hover: false,
+      check: false,
+    };
     const copyList = [...todoList, newItem];
     console.log(copyList);
     setTodoList(copyList);
@@ -165,9 +174,9 @@ export default function ToDoList() {
     setTodoList(copyList);
   };
 
-  const handleCheck = (text: string) => {
+  const handleCheck = (index: number) => {
     const updatedList = todoList.map((el) => {
-      if (el.text === text) {
+      if (el.id === index) {
         return { ...el, check: !el.check };
       }
       return el;
@@ -196,64 +205,71 @@ export default function ToDoList() {
         </Top>
         <ListsBox>
           <AllListsBox>
+            {/* 체크가 안된걸 가져올건데 처음에 el.check는 false이다. 그중에서 false의 반대  true인것만 필터링 하겠다는 뜻 */}
             {todoList
               .filter((el) => !el.check)
-              .map((el, index) => (
+              .map((el) => (
                 <>
                   <TextListsDiv>
                     <CheckTextBox>
+                      {/* 체크박스 */}
                       <CheckInput
                         type='checkbox'
+                        //처음 check 초기값으로 들어간다.
                         checked={el.check}
-                        onChange={() => handleCheck(el.text)}
+                        onChange={() => handleCheck(el.id)}
                       />
+                      {/* 체크여부를 따져서 테스트에 효과주기 위함 */}
                       {el.check ? (
-                        <CheckedTextList key={index}>{el.text}</CheckedTextList>
+                        <CheckedTextList key={el.id}>{el.text}</CheckedTextList>
                       ) : (
-                        <TextList key={index}>{el.text}</TextList>
+                        <TextList key={el.id}>{el.text}</TextList>
                       )}
                     </CheckTextBox>
+                    {/* 쓰레기통 호버효과 */}
                     <div
-                      onMouseOver={() => handleMouseOver(index)}
-                      onMouseOut={() => handleMouseOut(index)}
+                      onMouseOver={() => handleMouseOver(el.id)}
+                      onMouseOut={() => handleMouseOut(el.id)}
                     >
+                      {/* 쓰레기통 */}
                       <FaTrashAlt
                         color={el.hover ? 'red' : '#666'}
-                        onClick={() => handleDelete(index)}
+                        onClick={() => handleDelete(el.id)}
                       />
                     </div>
                   </TextListsDiv>
                 </>
               ))}
           </AllListsBox>
+          {/* check가 완료됐을경우 */}
           <CheckListsBox>
             {todoList.some((el) => el.check) && (
               <p style={{ marginBottom: '10px' }}>👍 완료</p>
             )}
             {todoList
               .filter((el) => el.check)
-              .map((el, index) => (
+              .map((el) => (
                 <>
                   <TextListsDiv>
                     <CheckTextBox>
                       <CheckInput
                         type='checkbox'
                         checked={el.check}
-                        onChange={() => handleCheck(el.text)}
+                        onChange={() => handleCheck(el.id)}
                       />
                       {el.check ? (
-                        <CheckedTextList key={index}>{el.text}</CheckedTextList>
+                        <CheckedTextList key={el.id}>{el.text}</CheckedTextList>
                       ) : (
-                        <TextList key={index}>{el.text}</TextList>
+                        <TextList key={el.id}>{el.text}</TextList>
                       )}
                     </CheckTextBox>
                     <div
-                      onMouseOver={() => handleMouseOver(index)}
-                      onMouseOut={() => handleMouseOut(index)}
+                      onMouseOver={() => handleMouseOver(el.id)}
+                      onMouseOut={() => handleMouseOut(el.id)}
                     >
                       <FaTrashAlt
                         color={el.hover ? 'red' : '#666'}
-                        onClick={() => handleDelete(index)}
+                        onClick={() => handleDelete(el.id)}
                       />
                     </div>
                   </TextListsDiv>
