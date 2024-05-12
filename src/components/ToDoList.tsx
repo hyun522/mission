@@ -137,11 +137,8 @@ export default function ToDoList() {
     { text: string; hover: boolean; check: boolean }[]
   >([]);
 
-  const handlePlusInput = () => {
-    setInput(true);
-  };
-  const handleMinusInput = () => {
-    setInput(false);
+  const handlePlusMinusInput = (item: boolean) => {
+    setInput(item);
   };
 
   const handleText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -266,7 +263,7 @@ export default function ToDoList() {
         </ListsBox>
         {input ? (
           <>
-            <ListMinusButton onClick={() => handleMinusInput()}>
+            <ListMinusButton onClick={() => handlePlusMinusInput(false)}>
               x
             </ListMinusButton>
             <InputBox>
@@ -279,7 +276,9 @@ export default function ToDoList() {
             </InputBox>
           </>
         ) : (
-          <ListAddButton onClick={() => handlePlusInput()}>+</ListAddButton>
+          <ListAddButton onClick={() => handlePlusMinusInput(true)}>
+            +
+          </ListAddButton>
         )}
       </MainBox>
     </Bg>
