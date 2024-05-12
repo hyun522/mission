@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 import styled from 'styled-components';
+import { formattdDate, formattdDay } from '../utils/date';
 
 const Bg = styled.div`
   display: flex;
@@ -130,25 +131,21 @@ const AddInput = styled.input`
 `;
 
 export default function ToDoList() {
-  const [input, SetInput] = useState<boolean>(false);
-  const [text, SetText] = useState('');
-  const [textList, SetTextList] = useState<
+  const [input, setInput] = useState<boolean>(false);
+  const [text, setText] = useState('');
+  const [todoList, setTodoList] = useState<
     { text: string; hover: boolean; check: boolean }[]
   >([]);
-  const today = new Date();
-  const formattdDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
-  const week = ['일', '월', '화', '수', '목', '금', '토'];
-  const formattdDay = `${week[today.getDay()]}요일`;
 
   const handlePlusInput = () => {
-    SetInput(true);
+    setInput(true);
   };
   const handleMinusInput = () => {
-    SetInput(false);
+    setInput(false);
   };
 
   const handleText = (e: React.ChangeEvent<HTMLInputElement>) => {
-    SetText(e.target.value);
+    setText(e.target.value);
   };
 
   const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -159,38 +156,38 @@ export default function ToDoList() {
 
   const handleTextList = (text: string) => {
     const newItem = { text: text, hover: false, check: false };
-    const copyList = [...textList, newItem];
+    const copyList = [...todoList, newItem];
     console.log(copyList);
-    SetTextList(copyList);
-    SetText('');
+    setTodoList(copyList);
+    setText('');
   };
 
   const handleMouseOver = (index: number) => {
-    const copyList = [...textList];
+    const copyList = [...todoList];
     copyList[index].hover = true;
-    SetTextList(copyList);
+    setTodoList(copyList);
   };
 
   const handleCheck = (text: string) => {
-    const updatedList = textList.map((el) => {
+    const updatedList = todoList.map((el) => {
       if (el.text === text) {
         return { ...el, check: !el.check };
       }
       return el;
     });
-    SetTextList(updatedList);
+    setTodoList(updatedList);
   };
 
   const handleMouseOut = (index: number) => {
-    const copyList = [...textList];
+    const copyList = [...todoList];
     copyList[index].hover = false;
-    SetTextList(copyList);
+    setTodoList(copyList);
   };
 
   const handleDelete = (index: number) => {
-    const copyList = [...textList];
+    const copyList = [...todoList];
     copyList.splice(index, 1);
-    SetTextList(copyList);
+    setTodoList(copyList);
   };
 
   return (
@@ -202,7 +199,7 @@ export default function ToDoList() {
         </Top>
         <ListsBox>
           <AllListsBox>
-            {textList
+            {todoList
               .filter((el) => !el.check)
               .map((el, index) => (
                 <>
@@ -233,10 +230,10 @@ export default function ToDoList() {
               ))}
           </AllListsBox>
           <CheckListsBox>
-            {textList.some((el) => el.check) && (
+            {todoList.some((el) => el.check) && (
               <p style={{ marginBottom: '10px' }}>👍 완료</p>
             )}
-            {textList
+            {todoList
               .filter((el) => el.check)
               .map((el, index) => (
                 <>
