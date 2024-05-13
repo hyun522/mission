@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 import styled from 'styled-components';
+import { formattdDate, formattdDay } from '../utils/date';
 
 const Bg = styled.div`
   display: flex;
@@ -129,68 +130,58 @@ const AddInput = styled.input`
   }
 `;
 
-export default function ToDoList() {
-  const [input, SetInput] = useState<boolean>(false);
-  const [text, SetText] = useState('');
-  const [textList, SetTextList] = useState<
-    { text: string; hover: boolean; check: boolean }[]
-  >([]);
-  const today = new Date();
-  const formattdDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
-  const week = ['일', '월', '화', '수', '목', '금', '토'];
-  const formattdDay = `${week[today.getDay()]}요일`;
+const TrashAlt = styled(FaTrashAlt)`
+  color: gray;
+  &:hover {
+    color: red;
+  }
+`;
 
-  const handlePlusInput = () => {
-    SetInput(true);
-  };
-  const handleMinusInput = () => {
-    SetInput(false);
+export default function ToDoList() {
+  const [input, setInput] = useState<boolean>(false);
+  const [text, setText] = useState('');
+  const [todoList, setTodoList] = useState<
+    { id: number; text: string; check: boolean }[]
+  >([]);
+
+  const handlePlusMinusInput = (item: boolean) => {
+    setInput(item);
   };
 
   const handleText = (e: React.ChangeEvent<HTMLInputElement>) => {
-    SetText(e.target.value);
+    setText(e.target.value);
   };
 
   const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && e.nativeEvent.isComposing === false) {
-      handleTextList(text);
+      handleListAddText(text);
     }
   };
 
-  const handleTextList = (text: string) => {
-    const newItem = { text: text, hover: false, check: false };
-    const copyList = [...textList, newItem];
-    console.log(copyList);
-    SetTextList(copyList);
-    SetText('');
+  const handleListAddText = (text: string) => {
+    const newItem = {
+      id: Math.floor(Math.random() * 1000),
+      text: text,
+      check: false,
+    };
+    const copyList = [...todoList, newItem];
+    setTodoList(copyList);
+    setText('');
   };
 
-  const handleMouseOver = (index: number) => {
-    const copyList = [...textList];
-    copyList[index].hover = true;
-    SetTextList(copyList);
-  };
-
-  const handleCheck = (text: string) => {
-    const updatedList = textList.map((el) => {
-      if (el.text === text) {
+  const handleToggleCheck = (index: number) => {
+    const updatedList = todoList.map((el) => {
+      if (el.id === index) {
         return { ...el, check: !el.check };
       }
       return el;
     });
-    SetTextList(updatedList);
-  };
-
-  const handleMouseOut = (index: number) => {
-    const copyList = [...textList];
-    copyList[index].hover = false;
-    SetTextList(copyList);
+    setTodoList(updatedList);
   };
 
   const handleDelete = (index: number) => {
-    const copyList = [...textList];
-    copyList.splice(index, 1);
-    SetTextList(copyList);
+    const updatedList = todoList.filter((el) => el.id !== index);
+    setTodoList(updatedList);
   };
 
   return (
@@ -202,74 +193,54 @@ export default function ToDoList() {
         </Top>
         <ListsBox>
           <AllListsBox>
-            {textList
+            {todoList
               .filter((el) => !el.check)
-              .map((el, index) => (
-                <>
-                  <TextListsDiv>
-                    <CheckTextBox>
-                      <CheckInput
-                        type='checkbox'
-                        checked={el.check}
-                        onChange={() => handleCheck(el.text)}
-                      />
-                      {el.check ? (
-                        <CheckedTextList key={index}>{el.text}</CheckedTextList>
-                      ) : (
-                        <TextList key={index}>{el.text}</TextList>
-                      )}
-                    </CheckTextBox>
-                    <div
-                      onMouseOver={() => handleMouseOver(index)}
-                      onMouseOut={() => handleMouseOut(index)}
-                    >
-                      <FaTrashAlt
-                        color={el.hover ? 'red' : '#666'}
-                        onClick={() => handleDelete(index)}
-                      />
-                    </div>
-                  </TextListsDiv>
-                </>
+              .map((el) => (
+                <TextListsDiv key={el.id}>
+                  <CheckTextBox>
+                    <CheckInput
+                      type='checkbox'
+                      checked={el.check}
+                      onChange={() => handleToggleCheck(el.id)}
+                    />
+                    {el.check ? (
+                      <CheckedTextList>{el.text}</CheckedTextList>
+                    ) : (
+                      <TextList>{el.text}</TextList>
+                    )}
+                  </CheckTextBox>
+                  <TrashAlt onClick={() => handleDelete(el.id)} />
+                </TextListsDiv>
               ))}
           </AllListsBox>
           <CheckListsBox>
-            {textList.some((el) => el.check) && (
+            {todoList.some((el) => el.check) && (
               <p style={{ marginBottom: '10px' }}>👍 완료</p>
             )}
-            {textList
+            {todoList
               .filter((el) => el.check)
-              .map((el, index) => (
-                <>
-                  <TextListsDiv>
-                    <CheckTextBox>
-                      <CheckInput
-                        type='checkbox'
-                        checked={el.check}
-                        onChange={() => handleCheck(el.text)}
-                      />
-                      {el.check ? (
-                        <CheckedTextList key={index}>{el.text}</CheckedTextList>
-                      ) : (
-                        <TextList key={index}>{el.text}</TextList>
-                      )}
-                    </CheckTextBox>
-                    <div
-                      onMouseOver={() => handleMouseOver(index)}
-                      onMouseOut={() => handleMouseOut(index)}
-                    >
-                      <FaTrashAlt
-                        color={el.hover ? 'red' : '#666'}
-                        onClick={() => handleDelete(index)}
-                      />
-                    </div>
-                  </TextListsDiv>
-                </>
+              .map((el) => (
+                <TextListsDiv key={el.id}>
+                  <CheckTextBox>
+                    <CheckInput
+                      type='checkbox'
+                      checked={el.check}
+                      onChange={() => handleToggleCheck(el.id)}
+                    />
+                    {el.check ? (
+                      <CheckedTextList>{el.text}</CheckedTextList>
+                    ) : (
+                      <TextList key={el.id}>{el.text}</TextList>
+                    )}
+                  </CheckTextBox>
+                  <TrashAlt onClick={() => handleDelete(el.id)} />
+                </TextListsDiv>
               ))}
           </CheckListsBox>
         </ListsBox>
         {input ? (
           <>
-            <ListMinusButton onClick={() => handleMinusInput()}>
+            <ListMinusButton onClick={() => handlePlusMinusInput(false)}>
               x
             </ListMinusButton>
             <InputBox>
@@ -282,7 +253,9 @@ export default function ToDoList() {
             </InputBox>
           </>
         ) : (
-          <ListAddButton onClick={() => handlePlusInput()}>+</ListAddButton>
+          <ListAddButton onClick={() => handlePlusMinusInput(true)}>
+            +
+          </ListAddButton>
         )}
       </MainBox>
     </Bg>
