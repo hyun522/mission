@@ -29,6 +29,9 @@ const EmailInput = styled.input`
 `;
 
 const PassWordInput = styled(EmailInput)`
+  margin-top: 20px;
+`;
+const CheckPassWordInput = styled(EmailInput)`
   margin: 20px 0 30px 0;
 `;
 
@@ -67,6 +70,7 @@ export default function SignUp() {
         <form>
           <EmailInput placeholder='이메일' />
           <PassWordInput placeholder='비밀번호' />
+          <CheckPassWordInput placeholder='비밀번호 확인' />
           <NextButton>다음</NextButton>
         </form>
         <GoLogin>
