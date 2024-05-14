@@ -18,7 +18,7 @@ const GlobalStyle = createGlobalStyle`
         vertical-align:top;
     }
     ul,ol,li { list-style:none; }
-    a { text-align:none; }
+    a { text-decoration:none; }
 `;
 
 export default GlobalStyle;
