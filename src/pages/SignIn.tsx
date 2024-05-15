@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 interface Inputs {
   email: string;
   password: string;
@@ -54,13 +55,29 @@ const LoginButton = styled.button`
 `;
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    const storageData = localStorage.getItem('key');
+    if (storageData !== null) {
+      const signUpStorageData = JSON.parse(storageData);
+      if (
+        signUpStorageData.email === data.email &&
+        signUpStorageData.password === data.password
+      ) {
+        navigate('/');
+      } else {
+        alert('이메일 또는 비밀번호가 일치하지 않습니다.');
+      }
+    } else {
+      alert('사용자 데이터를 찾을 수 없습니다. 회원가입을 먼저 진행해 주세요.');
+    }
+  };
 
   return (
     <Bg>
