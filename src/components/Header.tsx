@@ -9,17 +9,24 @@ const LoginLi = styled.li`
 `;
 
 export default function Header() {
-  const storageData = JSON.parse(localStorage.getItem('key') || '{}');
+  const localStorageData = localStorage.getItem('key');
+  const storageData = localStorageData ? JSON.parse(localStorageData) : null;
+
+  const handleLogOut = () => {
+    localStorage.removeItem('key');
+  };
 
   return (
     <NavGnb>
-      {storageData ? (
+      {storageData !== null ? (
         <>
           <LoginLi>
             <NavLink to='/signin'>{storageData.email}</NavLink>
           </LoginLi>
           <li>
-            <NavLink to='/signup'>로그아웃</NavLink>
+            <NavLink to='/signup' onClick={handleLogOut}>
+              로그아웃
+            </NavLink>
           </li>
         </>
       ) : (
