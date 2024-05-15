@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 interface Inputs {
@@ -82,6 +82,8 @@ const LinkText = styled(Link)`
 `;
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -91,6 +93,7 @@ export default function SignUp() {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     localStorage.setItem('key', JSON.stringify(data));
+    navigate('/signin');
   };
 
   return (
