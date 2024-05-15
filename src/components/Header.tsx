@@ -12,10 +12,11 @@ export default function Header() {
   const localStorageData = localStorage.getItem('key');
   const storageData = localStorageData ? JSON.parse(localStorageData) : null;
 
-  const handleLogOut = () => {
+  const handleLogOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
     localStorage.removeItem('key');
+    location.reload();
   };
-
   return (
     <NavGnb>
       {storageData !== null ? (
