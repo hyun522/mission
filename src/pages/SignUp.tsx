@@ -89,9 +89,9 @@ export default function SignUp() {
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
-  console.log(watch());
-  console.log(errors);
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    localStorage.setItem('key', JSON.stringify(data));
+  };
 
   return (
     <Bg>
