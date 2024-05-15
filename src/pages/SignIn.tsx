@@ -1,4 +1,9 @@
 import styled from 'styled-components';
+import { useForm, SubmitHandler } from 'react-hook-form';
+interface Inputs {
+  email: string;
+  password: string;
+}
 
 const Bg = styled.div`
   height: 100vh;
@@ -9,7 +14,6 @@ const Bg = styled.div`
 
 const SignInBox = styled.div`
   width: 30dvw;
-  text-align: center;
 `;
 
 const SignInTitle = styled.p`
@@ -18,6 +22,7 @@ const SignInTitle = styled.p`
   margin: 0 auto;
   font-size: 20px;
   margin-bottom: 30px;
+  text-align: center;
 `;
 
 const EmailInput = styled.input`
@@ -28,7 +33,13 @@ const EmailInput = styled.input`
 `;
 
 const PassWordInput = styled(EmailInput)`
-  margin: 20px 0 30px 0;
+  margin-top: 20px;
+`;
+
+const ErrorMessage = styled.div`
+  font-size: 12px;
+  color: #e22424;
+  margin: 5px 0 0 5px;
 `;
 
 const LoginButton = styled.button`
@@ -39,17 +50,48 @@ const LoginButton = styled.button`
   border-radius: 50px;
   border: none;
   cursor: pointer;
+  margin-top: 30px;
 `;
 
 export default function SignIn() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<Inputs>();
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
   return (
     <Bg>
       <SignInBox>
         <SignInTitle>로그인하고 여러분의 하루를 남겨보세요.</SignInTitle>
-        <form>
-          <EmailInput placeholder='이메일' />
-          <PassWordInput placeholder='비밀번호' />
-          <LoginButton>로그인하기</LoginButton>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <EmailInput
+            placeholder='이메일'
+            {...register('email', {
+              required: true,
+              pattern: /^[^s@]+@[^s@]+\.[^s@]+$/,
+            })}
+          />
+          {errors.email && (
+            <ErrorMessage> 올바른 이메일 주소가 아닙니다. </ErrorMessage>
+          )}
+          <PassWordInput
+            placeholder='비밀번호'
+            type='password'
+            {...register('password', {
+              required: true,
+              pattern:
+                /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            })}
+          />
+          {errors.password && (
+            <ErrorMessage>
+              비밀번호는 영문, 숫자 조합 8자 이상 입력해 주세요.
+            </ErrorMessage>
+          )}
+          <LoginButton disabled={isSubmitting}>로그인하기</LoginButton>
         </form>
       </SignInBox>
     </Bg>
