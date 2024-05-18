@@ -169,9 +169,9 @@ export default function ToDoList() {
     setText('');
   };
 
-  const handleToggleCheck = (index: number) => {
+  const handleToggleCheck = (id: number) => {
     const updatedList = todoList.map((el) => {
-      if (el.id === index) {
+      if (el.id === id) {
         return { ...el, check: !el.check };
       }
       return el;
@@ -179,8 +179,8 @@ export default function ToDoList() {
     setTodoList(updatedList);
   };
 
-  const handleDelete = (index: number) => {
-    const updatedList = todoList.filter((el) => el.id !== index);
+  const handleDelete = (id: number) => {
+    const updatedList = todoList.filter((el) => el.id !== id);
     setTodoList(updatedList);
   };
 
