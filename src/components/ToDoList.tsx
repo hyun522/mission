@@ -203,11 +203,7 @@ export default function ToDoList() {
                       checked={el.check}
                       onChange={() => handleToggleCheck(el.id)}
                     />
-                    {el.check ? (
-                      <CheckedTextList>{el.text}</CheckedTextList>
-                    ) : (
-                      <TextList>{el.text}</TextList>
-                    )}
+                    {el.text}
                   </CheckTextBox>
                   <TrashAlt onClick={() => handleDelete(el.id)} />
                 </TextListsDiv>
@@ -227,11 +223,7 @@ export default function ToDoList() {
                       checked={el.check}
                       onChange={() => handleToggleCheck(el.id)}
                     />
-                    {el.check ? (
-                      <CheckedTextList>{el.text}</CheckedTextList>
-                    ) : (
-                      <TextList key={el.id}>{el.text}</TextList>
-                    )}
+                    {el.text}
                   </CheckTextBox>
                   <TrashAlt onClick={() => handleDelete(el.id)} />
                 </TextListsDiv>
