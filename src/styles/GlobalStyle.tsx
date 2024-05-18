@@ -9,6 +9,7 @@ const GlobalStyle = createGlobalStyle`
     }
     * {
         margin:0; padding:0;
+        box-sizing: border-box;
     }
     body {
         line-height:1;
@@ -18,7 +19,7 @@ const GlobalStyle = createGlobalStyle`
         vertical-align:top;
     }
     ul,ol,li { list-style:none; }
-    a { text-align:none; }
+    a { text-decoration:none; }
 `;
 
 export default GlobalStyle;
