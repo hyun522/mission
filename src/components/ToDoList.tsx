@@ -246,8 +246,8 @@ export default function ToDoList() {
             <InputBox>
               <AddInput
                 placeholder='할일을 입력 후 Enter를 누르세요.'
-                onChange={(e) => handleText(e)}
-                onKeyDown={(e) => activeEnter(e)}
+                onChange={handleText}
+                onKeyDown={activeEnter}
                 value={text}
               />
             </InputBox>
