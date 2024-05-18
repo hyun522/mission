@@ -84,7 +84,6 @@ const DayBox = styled.div`
 const ListAddButton = styled.button`
   border-radius: 50%;
   border: none;
-  //반응형 떄문에 width height 지정 해주고 싶지 않은데 방법이 있을까..
   width: 73px;
   height: 70px;
   background-color: #31d19c;
@@ -101,7 +100,6 @@ const ListMinusButton = styled(ListAddButton)`
   background-color: #fe787b;
   font-size: 45px;
   padding-bottom: 5px;
-  //z-index 관리 어렵다고 하던데..
   z-index: 1;
 `;
 
