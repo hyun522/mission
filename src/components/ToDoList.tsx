@@ -144,8 +144,8 @@ export default function ToDoList() {
     { id: number; text: string; check: boolean }[]
   >([]);
 
-  const handlePlusMinusInput = (item: boolean) => {
-    setInput(item);
+  const handlePlusMinusInput = (isPlus: boolean) => {
+    setInput(isPlus);
   };
 
   const handleText = (e: React.ChangeEvent<HTMLInputElement>) => {
