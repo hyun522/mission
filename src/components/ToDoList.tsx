@@ -136,14 +136,14 @@ const TrashAlt = styled(FaTrashAlt)`
 `;
 
 export default function ToDoList() {
-  const [isPlus, setIsPlus] = useState<boolean>(false);
+  const [input, setInput] = useState<boolean>(false);
   const [text, setText] = useState('');
   const [todoList, setTodoList] = useState<
     { id: number; text: string; check: boolean }[]
   >([]);
 
   const handlePlusMinusInput = (isPlus: boolean) => {
-    setIsPlus(isPlus);
+    setInput(isPlus);
   };
 
   const handleText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -236,7 +236,7 @@ export default function ToDoList() {
               ))}
           </CheckListsBox>
         </ListsBox>
-        {isPlus ? (
+        {input ? (
           <>
             <ListMinusButton onClick={() => handlePlusMinusInput(false)}>
               x
