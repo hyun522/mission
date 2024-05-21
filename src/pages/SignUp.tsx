@@ -1,7 +1,11 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { emailRegex, passwordRegex } from '../utils/regex.ts';
+import {
+  validateEmail,
+  validatePassword,
+  validateConfirmPassword,
+} from '../utils/regex.ts';
 interface User {
   email: string;
   password: string;
@@ -91,50 +95,6 @@ const SignUp: React.FC = () => {
     setConfirmPassword(e.target.value);
   };
 
-  const validateEmail = (email: string): boolean => {
-    if (!email) {
-      setEmailError('이메일을 입력해주세요.');
-      return false;
-    } else if (!emailRegex.test(email)) {
-      setEmailError('유효한 이메일을 입력해주세요.');
-      return false;
-    } else {
-      setEmailError('');
-      return true;
-    }
-  };
-
-  const validatePassword = (password: string): boolean => {
-    if (!password) {
-      setPasswordError('비밀번호를 입력해주세요.');
-      return false;
-    } else if (!passwordRegex.test(password)) {
-      setPasswordError(
-        '비밀번호는 8자 이상의 영소문자, 숫자, 특수문자를 포함해야 합니다.',
-      );
-      return false;
-    } else {
-      setPasswordError('');
-      return true;
-    }
-  };
-
-  const validateConfirmPassword = (
-    password: string,
-    confirmPassword: string,
-  ): boolean => {
-    if (!confirmPassword) {
-      setConfirmPasswordError('비밀번호 확인을 입력해주세요.');
-      return false;
-    } else if (password !== confirmPassword) {
-      setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
-      return false;
-    } else {
-      setConfirmPasswordError('');
-      return true;
-    }
-  };
-
   const emailDuplicateCheck = (email: string): boolean => {
     const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
     return !users.some((user) => user.email === email);
@@ -149,7 +109,10 @@ const SignUp: React.FC = () => {
       confirmPassword,
     );
 
-    if (!isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
+    if (isEmailValid || isPasswordValid || isConfirmPasswordValid) {
+      setEmailError(isEmailValid);
+      setPasswordError(isPasswordValid);
+      setConfirmPasswordError(isConfirmPasswordValid);
       return;
     }
 
@@ -161,11 +124,13 @@ const SignUp: React.FC = () => {
     const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
 
     users.push({ email, password });
+
     localStorage.setItem('users', JSON.stringify(users));
     alert('회원가입에 성공하였습니다.');
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+    window.location.href = '/signin';
   };
 
   return (

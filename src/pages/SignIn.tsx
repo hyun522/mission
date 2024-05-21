@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { emailRegex, passwordRegex } from '../utils/regex.ts';
+import { validateEmail, validatePassword } from '../utils/regex.ts';
 interface LoginUser {
   email: string;
   password: string;
@@ -69,41 +69,15 @@ const SignIn: React.FC = () => {
     setPassword(e.target.value);
   };
 
-  const validateEmail = (email: string): boolean => {
-    if (!email) {
-      setEmailError('이메일을 입력해주세요.');
-      return false;
-    } else if (!emailRegex.test(email)) {
-      setEmailError('유효한 이메일을 입력해주세요.');
-      return false;
-    } else {
-      setEmailError('');
-      return true;
-    }
-  };
-
-  const validatePassword = (password: string): boolean => {
-    if (!password) {
-      setPasswordError('비밀번호를 입력해주세요.');
-      return false;
-    } else if (!passwordRegex.test(password)) {
-      setPasswordError(
-        '비밀번호는 8자 이상의 영소문자, 숫자, 특수문자를 포함해야 합니다.',
-      );
-      return false;
-    } else {
-      setPasswordError('');
-      return true;
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     let isEmailValid = validateEmail(email);
     let isPasswordValid = validatePassword(password);
 
-    if (!isEmailValid || !isPasswordValid) {
+    if (isEmailValid || isPasswordValid) {
+      setEmailError(isEmailValid);
+      setPasswordError(isPasswordValid);
       return;
     }
 
