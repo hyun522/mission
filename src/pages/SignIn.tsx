@@ -1,7 +1,6 @@
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-interface Inputs {
+interface LoginUser {
   email: string;
   password: string;
 }
@@ -54,28 +53,86 @@ const LoginButton = styled.button`
   margin-top: 30px;
 `;
 
-export default function SignIn() {
-  const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<Inputs>();
+const SignIn: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
+  // const [successLogin, setSuccessLogin] = useState<string>('');
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const storageData = localStorage.getItem('key');
-    if (storageData !== null) {
-      const signUpStorageData = JSON.parse(storageData);
-      if (
-        signUpStorageData.email === data.email &&
-        signUpStorageData.password === data.password
-      ) {
-        navigate('/');
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  //유저가 입력한 값을 담아오겠다.
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    console.log(email);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    console.log(password);
+  };
+
+  const validateEmail = (email: string): boolean => {
+    if (!email) {
+      //값이 있으면 true => false
+      //값이 없으면 false => true
+      setEmailError('이메일을 입력해주세요.');
+      return false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError('유효한 이메일을 입력해주세요.');
+      return false;
+    } else {
+      setEmailError('');
+      return true;
+    }
+  };
+
+  const validatePassword = (password: string): boolean => {
+    //password '' false  텍스트가 있으면 true
+    if (!password) {
+      setPasswordError('비밀번호를 입력해주세요.');
+      return false;
+    } else if (!passwordRegex.test(password)) {
+      setPasswordError(
+        '비밀번호는 8자 이상의 영소문자, 숫자, 특수문자를 포함해야 합니다.',
+      );
+      return false;
+    } else {
+      setPasswordError('');
+      return true;
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    let isEmailValid = validateEmail(email);
+    let isPasswordValid = validatePassword(password);
+
+    //유효성검사에 통과하지 못하면 제출을 중지하겠다.
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
+
+    const users: LoginUser[] = JSON.parse(
+      localStorage.getItem('users') || '[]',
+    );
+
+    const user = users.find((user) => user.email === email);
+
+    //배열에서 조건에 해당하는 첫번째 요소를 반환.
+    if (user) {
+      if (user.password === password) {
+        setEmail('');
+        setPassword('');
       } else {
-        alert('이메일 또는 비밀번호가 일치하지 않습니다.');
+        setPasswordError('이메일 또는 비밀번호가 일치하지 않습니다.');
       }
     } else {
-      alert('사용자 데이터를 찾을 수 없습니다. 회원가입을 먼저 진행해 주세요.');
+      setPasswordError('존재하지 않는 회원입니다.');
     }
   };
 
@@ -83,34 +140,26 @@ export default function SignIn() {
     <Bg>
       <SignInBox>
         <SignInTitle>로그인하고 여러분의 하루를 남겨보세요.</SignInTitle>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit}>
           <EmailInput
             placeholder='이메일'
-            {...register('email', {
-              required: true,
-              pattern: /^[^s@]+@[^s@]+\.[^s@]+$/,
-            })}
+            type='text'
+            value={email}
+            onChange={handleEmailChange}
           />
-          {errors.email && (
-            <ErrorMessage> 올바른 이메일 주소가 아닙니다. </ErrorMessage>
-          )}
+          {emailError && <ErrorMessage> {emailError}</ErrorMessage>}
           <PassWordInput
             placeholder='비밀번호'
             type='password'
-            {...register('password', {
-              required: true,
-              pattern:
-                /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            })}
+            value={password}
+            onChange={handlePasswordChange}
           />
-          {errors.password && (
-            <ErrorMessage>
-              비밀번호는 영문, 숫자 조합 8자 이상 입력해 주세요.
-            </ErrorMessage>
-          )}
-          <LoginButton disabled={isSubmitting}>로그인하기</LoginButton>
+          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+          <LoginButton type='submit'>로그인하기</LoginButton>
         </form>
       </SignInBox>
     </Bg>
   );
-}
+};
+
+export default SignIn;
