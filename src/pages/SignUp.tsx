@@ -1,8 +1,12 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { emailRegex, passwordRegex } from '../utils/regex.ts';
+interface User {
+  email: string;
+  password: string;
+}
 
-// 스타일드 컴포넌트 정의
 const Bg = styled.div`
   height: 100vh;
   display: flex;
@@ -67,35 +71,16 @@ const LinkText = styled(Link)`
   text-decoration: underline;
 `;
 
-interface User {
-  email: string;
-  password: string;
-}
-
 const SignUp: React.FC = () => {
-  //리액트 함수 컴포넌트 라는 말
-
   const [email, setEmail] = useState<string>('');
-  //이메일
   const [password, setPassword] = useState<string>('');
-  //비밀번호
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  //비밀번호확인
   const [emailError, setEmailError] = useState<string>('');
-  //이메일 에러
   const [passwordError, setPasswordError] = useState<string>('');
-  //비밀번호 에러
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
-  //비밀번호 체크 에러
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    //onchange라서
     setEmail(e.target.value);
-    //입력한 값을 넣어주겠다.
   };
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -107,12 +92,10 @@ const SignUp: React.FC = () => {
   };
 
   const validateEmail = (email: string): boolean => {
-    //사용자가 입력한 값을 받아온다.
     if (!email) {
       setEmailError('이메일을 입력해주세요.');
       return false;
     } else if (!emailRegex.test(email)) {
-      //test메서드 boolean값을 반환한다.
       setEmailError('유효한 이메일을 입력해주세요.');
       return false;
     } else {
@@ -154,38 +137,26 @@ const SignUp: React.FC = () => {
 
   const emailDuplicateCheck = (email: string): boolean => {
     const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
-    //users 항목이 localstorage에 없다면 빈배열을 가져오겠다. 빈배열을 가져오는 이유는 함수가 항상 배열을 다루도록 보장
-    // console.log(users);  // [{},{}]
     return !users.some((user) => user.email === email);
-    // some메소드는 적어도 하나의 배열 멤버가 주어진 함수에 의해 정의된 테스트를 만족하는지 확인 boolean값을 반환한다.
-    // 조건에 부합하는 email이 있다면 false 를 반환해라
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    //폼 제출의 기본 동작인 새로고침을 막는다.
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword(password);
     const isConfirmPasswordValid = validateConfirmPassword(
       password,
       confirmPassword,
     );
-    //2.위 변수 세개 모두 사용자가 입력한 값으로 유효성 검사를 실사한다.
 
     if (!isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
       return;
     }
-    // 3.이메일, 비밀번호, 비밀번호 확인 값 중 하나라도 유효하지 않은 경우 (isEmailValid, isPasswordValid, isConfirmPasswordValid 중 하나라도 false인 경우),
-    // return문을 실행하여 handleSubmit 함수의 실행을 종료
 
     if (!emailDuplicateCheck(email)) {
-      //만약에 메일이 중복된다면 false를 반환 한다 그걸 한번더 뒤엎어서 true를 반환한다.
       setEmailError('이미 사용 중인 이메일입니다.');
       return;
     }
-
-    //위의 유효성 검사와 email중복체크 마무리후 localstorage에 저장
-    // 처음에 로컬 스토리지에 'users' 키가 없다면, getItem은 null을 반환합니다. 이 경우 빈 배열을 사용하게 됩니다.
 
     const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
 

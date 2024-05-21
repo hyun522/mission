@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { emailRegex, passwordRegex } from '../utils/regex.ts';
 interface LoginUser {
   email: string;
   password: string;
@@ -60,25 +61,16 @@ const SignIn: React.FC = () => {
   const [passwordError, setPasswordError] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-  //유저가 입력한 값을 담아오겠다.
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    console.log(email);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    console.log(password);
   };
 
   const validateEmail = (email: string): boolean => {
     if (!email) {
-      //값이 있으면 true => false
-      //값이 없으면 false => true
       setEmailError('이메일을 입력해주세요.');
       return false;
     } else if (!emailRegex.test(email)) {
@@ -91,7 +83,6 @@ const SignIn: React.FC = () => {
   };
 
   const validatePassword = (password: string): boolean => {
-    //password '' false  텍스트가 있으면 true
     if (!password) {
       setPasswordError('비밀번호를 입력해주세요.');
       return false;
@@ -112,7 +103,6 @@ const SignIn: React.FC = () => {
     let isEmailValid = validateEmail(email);
     let isPasswordValid = validatePassword(password);
 
-    //유효성검사에 통과하지 못하면 제출을 중지하겠다.
     if (!isEmailValid || !isPasswordValid) {
       return;
     }
@@ -123,7 +113,6 @@ const SignIn: React.FC = () => {
 
     const user = users.find((user) => user.email === email);
 
-    //배열에서 조건에 해당하는 첫번째 요소를 반환.
     if (user) {
       if (user.password === password) {
         setEmail('');
