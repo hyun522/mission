@@ -118,6 +118,7 @@ const SignIn: React.FC = () => {
         setEmail('');
         setPassword('');
         setIsLoggedIn(true);
+        localStorage.setItem('currentUser', email);
       } else {
         setPasswordError('이메일 또는 비밀번호가 일치하지 않습니다.');
       }
@@ -128,7 +129,7 @@ const SignIn: React.FC = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      window.location.href = '/main';
+      window.location.href = '/';
     }
   }, [isLoggedIn]);
 
