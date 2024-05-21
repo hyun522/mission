@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 interface LoginUser {
   email: string;
@@ -58,7 +58,7 @@ const SignIn: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
-  // const [successLogin, setSuccessLogin] = useState<string>('');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const passwordRegex =
@@ -128,6 +128,7 @@ const SignIn: React.FC = () => {
       if (user.password === password) {
         setEmail('');
         setPassword('');
+        setIsLoggedIn(true);
       } else {
         setPasswordError('이메일 또는 비밀번호가 일치하지 않습니다.');
       }
@@ -135,6 +136,12 @@ const SignIn: React.FC = () => {
       setPasswordError('존재하지 않는 회원입니다.');
     }
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      window.location.href = '/main';
+    }
+  }, [isLoggedIn]);
 
   return (
     <Bg>
