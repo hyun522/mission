@@ -1,13 +1,8 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
-interface Inputs {
-  email: string;
-  password: string;
-  checkPassword: string;
-}
-
+// 스타일드 컴포넌트 정의
 const Bg = styled.div`
   height: 100vh;
   display: flex;
@@ -16,39 +11,45 @@ const Bg = styled.div`
 `;
 
 const SignUpBox = styled.div`
-  width: 30dvw;
+  width: 30vw;
 `;
 
 const SignUpTitle = styled.p`
-  width: 25dvw;
   line-height: 30px;
-  margin: 0 auto;
   font-size: 20px;
   margin-bottom: 30px;
   text-align: center;
 `;
 
-const EmailInput = styled.input`
+const Input = styled.input`
   width: 100%;
   padding: 15px;
   border-radius: 50px;
   border: 1px solid #ddd;
+  margin-bottom: 20px;
 `;
-
-const PassWordInput = styled(EmailInput)`
-  margin-top: 20px;
-`;
-
-const CheckPassWordInput = styled(PassWordInput)``;
 
 const ErrorMessage = styled.div`
   font-size: 12px;
   color: #e22424;
-  margin: 5px 0 0 5px;
+  margin: -15px 0 15px 10px;
 `;
 
-const ErrorMessageCheckPassword = styled(ErrorMessage)`
-  margin: 5px 0 15px 5px;
+const PasswordValidate = styled.p`
+  font-size: 12px;
+  margin-left: 5px;
+  color: #666;
+`;
+
+const Button = styled.button`
+  background-color: #ddd;
+  width: 100%;
+  color: #fff;
+  padding: 15px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
 `;
 
 const GoLogin = styled.div`
@@ -59,21 +60,6 @@ const GoLogin = styled.div`
   color: #777;
 `;
 
-const NextButton = styled.button`
-  background-color: #ddd;
-  width: 100%;
-  color: #fff;
-  padding: 15px;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-`;
-const PasswordValidate = styled.p`
-  font-size: 12px;
-  margin: 15px 0 30px 5px;
-  color: #666;
-`;
-
 const LinkText = styled(Link)`
   font-size: 14px;
   color: #444;
@@ -81,19 +67,134 @@ const LinkText = styled(Link)`
   text-decoration: underline;
 `;
 
-export default function SignUp() {
-  const navigate = useNavigate();
+interface User {
+  email: string;
+  password: string;
+}
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm<Inputs>();
+const SignUp: React.FC = () => {
+  //리액트 함수 컴포넌트 라는 말
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    localStorage.setItem('key', JSON.stringify(data));
-    navigate('/signin');
+  const [email, setEmail] = useState<string>('');
+  //이메일
+  const [password, setPassword] = useState<string>('');
+  //비밀번호
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  //비밀번호확인
+  const [emailError, setEmailError] = useState<string>('');
+  //이메일 에러
+  const [passwordError, setPasswordError] = useState<string>('');
+  //비밀번호 에러
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
+  //비밀번호 체크 에러
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    //onchange라서
+    setEmail(e.target.value);
+    //입력한 값을 넣어주겠다.
+  };
+
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const validateEmail = (email: string): boolean => {
+    //사용자가 입력한 값을 받아온다.
+    if (!email) {
+      setEmailError('이메일을 입력해주세요.');
+      return false;
+    } else if (!emailRegex.test(email)) {
+      //test메서드 boolean값을 반환한다.
+      setEmailError('유효한 이메일을 입력해주세요.');
+      return false;
+    } else {
+      setEmailError('');
+      return true;
+    }
+  };
+
+  const validatePassword = (password: string): boolean => {
+    if (!password) {
+      setPasswordError('비밀번호를 입력해주세요.');
+      return false;
+    } else if (!passwordRegex.test(password)) {
+      setPasswordError(
+        '비밀번호는 8자 이상의 영소문자, 숫자, 특수문자를 포함해야 합니다.',
+      );
+      return false;
+    } else {
+      setPasswordError('');
+      return true;
+    }
+  };
+
+  const validateConfirmPassword = (
+    password: string,
+    confirmPassword: string,
+  ): boolean => {
+    if (!confirmPassword) {
+      setConfirmPasswordError('비밀번호 확인을 입력해주세요.');
+      return false;
+    } else if (password !== confirmPassword) {
+      setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
+      return false;
+    } else {
+      setConfirmPasswordError('');
+      return true;
+    }
+  };
+
+  const emailDuplicateCheck = (email: string): boolean => {
+    const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+    //users 항목이 localstorage에 없다면 빈배열을 가져오겠다. 빈배열을 가져오는 이유는 함수가 항상 배열을 다루도록 보장
+    // console.log(users);  // [{},{}]
+    return !users.some((user) => user.email === email);
+    // some메소드는 적어도 하나의 배열 멤버가 주어진 함수에 의해 정의된 테스트를 만족하는지 확인 boolean값을 반환한다.
+    // 조건에 부합하는 email이 있다면 false 를 반환해라
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    //폼 제출의 기본 동작인 새로고침을 막는다.
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    const isConfirmPasswordValid = validateConfirmPassword(
+      password,
+      confirmPassword,
+    );
+    //2.위 변수 세개 모두 사용자가 입력한 값으로 유효성 검사를 실사한다.
+
+    if (!isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
+      return;
+    }
+    // 3.이메일, 비밀번호, 비밀번호 확인 값 중 하나라도 유효하지 않은 경우 (isEmailValid, isPasswordValid, isConfirmPasswordValid 중 하나라도 false인 경우),
+    // return문을 실행하여 handleSubmit 함수의 실행을 종료
+
+    if (!emailDuplicateCheck(email)) {
+      //만약에 메일이 중복된다면 false를 반환 한다 그걸 한번더 뒤엎어서 true를 반환한다.
+      setEmailError('이미 사용 중인 이메일입니다.');
+      return;
+    }
+
+    //위의 유효성 검사와 email중복체크 마무리후 localstorage에 저장
+    // 처음에 로컬 스토리지에 'users' 키가 없다면, getItem은 null을 반환합니다. 이 경우 빈 배열을 사용하게 됩니다.
+
+    const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+
+    users.push({ email, password });
+    localStorage.setItem('users', JSON.stringify(users));
+    alert('회원가입에 성공하였습니다.');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
   };
 
   return (
@@ -102,61 +203,42 @@ export default function SignUp() {
         <SignUpTitle>
           회원가입을 하고 모든 서비스를 무료로 이용하세요.
         </SignUpTitle>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <EmailInput
+        <form onSubmit={handleSubmit}>
+          <Input
+            type='text'
             placeholder='이메일'
-            {...register('email', {
-              required: true,
-              pattern: /^[^s@]+@[^s@]+\.[^s@]+$/,
-            })}
+            value={email}
+            onChange={handleEmailChange}
           />
-          {errors.email && (
-            <ErrorMessage> 올바른 이메일 주소가 아닙니다. </ErrorMessage>
-          )}
-
-          <PassWordInput
+          {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+          <Input
+            type='password'
             placeholder='비밀번호'
-            type='password'
-            {...register('password', {
-              required: true,
-              pattern:
-                /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            })}
+            value={password}
+            onChange={handlePasswordChange}
           />
-          {errors.password && (
-            <ErrorMessage>
-              비밀번호는 영문, 숫자 조합 8자 이상 입력해 주세요.
-            </ErrorMessage>
-          )}
-
-          <CheckPassWordInput
-            placeholder='비밀번호 확인'
+          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+          <Input
             type='password'
-            {...register('checkPassword', {
-              required: true,
-              validate: (value: string) => {
-                if (watch('password') !== value) {
-                  return 'not match';
-                }
-              },
-            })}
+            placeholder='비밀번호확인'
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
           />
-          {errors.checkPassword && (
-            <ErrorMessageCheckPassword>
-              비밀번호가 일치하지 않습니다.
-            </ErrorMessageCheckPassword>
+          {confirmPasswordError && (
+            <ErrorMessage>{confirmPasswordError}</ErrorMessage>
           )}
           <PasswordValidate>
             ⚠︎ 비밀번호는 영어 소문자, 숫자, 특수문자 포함 8-20자
           </PasswordValidate>
-
-          <NextButton disabled={isSubmitting}>다음</NextButton>
+          <Button type='submit'>회원가입</Button>
         </form>
         <GoLogin>
-          <p>이미회원이신가요?</p>
+          <p>이미 회원이신가요?</p>
           <LinkText to='/signin'>로그인하기</LinkText>
         </GoLogin>
       </SignUpBox>
     </Bg>
   );
-}
+};
+
+export default SignUp;
