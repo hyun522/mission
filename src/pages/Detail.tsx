@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
+import styled from 'styled-components';
 interface Product {
   id: number;
   title: string;
@@ -10,6 +10,55 @@ interface Product {
   image: string;
   rating: { rate: number; count: number };
 }
+
+const Bg = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Main = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 800px;
+  margin: 50px 0 50px 0;
+`;
+
+const ImageContext = styled.div`
+  max-width: 300px;
+  height: 500px;
+  display: flex;
+  align-items: center;
+`;
+
+const Image = styled.img`
+  width: 100%;
+`;
+
+const TextContext = styled.div`
+  max-width: 400px;
+`;
+
+const Title = styled.p`
+  font-size: 35px;
+  line-height: 38px;
+`;
+
+const Description = styled.p`
+  margin-top: 30px;
+  font-size: 20px;
+  color: #555;
+  line-height: 25px;
+`;
+
+const Price = styled.p`
+  margin-top: 50px;
+`;
+
+const Rating = styled.p`
+  margin-top: 10px;
+`;
 
 export default function Detail() {
   const { id } = useParams();
@@ -34,15 +83,20 @@ export default function Detail() {
   }
 
   return (
-    <div>
-      <h1>{product.title}</h1>
-      <img src={product.image} alt={product.title} />
-      <p>{product.description}</p>
-      <p>Price: ${product.price}</p>
-      <p>Category: {product.category}</p>
-      <p>
-        Rating: {product.rating.rate} ({product.rating.count} reviews)
-      </p>
-    </div>
+    <Bg>
+      <Main>
+        <ImageContext>
+          <Image src={product.image} alt={product.title}></Image>
+        </ImageContext>
+        <TextContext>
+          <Title>{product.title}</Title>
+          <Description>{product.description}</Description>
+          <Price>Price: ${product.price}</Price>
+          <Rating>
+            Rating: {product.rating.rate} ({product.rating.count} reviews)
+          </Rating>
+        </TextContext>
+      </Main>
+    </Bg>
   );
 }
