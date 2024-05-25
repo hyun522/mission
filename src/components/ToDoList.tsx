@@ -84,7 +84,6 @@ const DayBox = styled.div`
 const ListAddButton = styled.button`
   border-radius: 50%;
   border: none;
-  //반응형 떄문에 width height 지정 해주고 싶지 않은데 방법이 있을까..
   width: 73px;
   height: 70px;
   background-color: #31d19c;
@@ -101,7 +100,6 @@ const ListMinusButton = styled(ListAddButton)`
   background-color: #fe787b;
   font-size: 45px;
   padding-bottom: 5px;
-  //z-index 관리 어렵다고 하던데..
   z-index: 1;
 `;
 
@@ -144,8 +142,8 @@ export default function ToDoList() {
     { id: number; text: string; check: boolean }[]
   >([]);
 
-  const handlePlusMinusInput = (item: boolean) => {
-    setInput(item);
+  const handlePlusMinusInput = (isPlus: boolean) => {
+    setInput(isPlus);
   };
 
   const handleText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,9 +167,9 @@ export default function ToDoList() {
     setText('');
   };
 
-  const handleToggleCheck = (index: number) => {
+  const handleToggleCheck = (id: number) => {
     const updatedList = todoList.map((el) => {
-      if (el.id === index) {
+      if (el.id === id) {
         return { ...el, check: !el.check };
       }
       return el;
@@ -179,8 +177,8 @@ export default function ToDoList() {
     setTodoList(updatedList);
   };
 
-  const handleDelete = (index: number) => {
-    const updatedList = todoList.filter((el) => el.id !== index);
+  const handleDelete = (id: number) => {
+    const updatedList = todoList.filter((el) => el.id !== id);
     setTodoList(updatedList);
   };
 
@@ -203,11 +201,7 @@ export default function ToDoList() {
                       checked={el.check}
                       onChange={() => handleToggleCheck(el.id)}
                     />
-                    {el.check ? (
-                      <CheckedTextList>{el.text}</CheckedTextList>
-                    ) : (
-                      <TextList>{el.text}</TextList>
-                    )}
+                    <TextList>{el.text}</TextList>
                   </CheckTextBox>
                   <TrashAlt onClick={() => handleDelete(el.id)} />
                 </TextListsDiv>
@@ -227,11 +221,7 @@ export default function ToDoList() {
                       checked={el.check}
                       onChange={() => handleToggleCheck(el.id)}
                     />
-                    {el.check ? (
-                      <CheckedTextList>{el.text}</CheckedTextList>
-                    ) : (
-                      <TextList key={el.id}>{el.text}</TextList>
-                    )}
+                    <CheckedTextList>{el.text}</CheckedTextList>
                   </CheckTextBox>
                   <TrashAlt onClick={() => handleDelete(el.id)} />
                 </TextListsDiv>
@@ -246,8 +236,8 @@ export default function ToDoList() {
             <InputBox>
               <AddInput
                 placeholder='할일을 입력 후 Enter를 누르세요.'
-                onChange={(e) => handleText(e)}
-                onKeyDown={(e) => activeEnter(e)}
+                onChange={handleText}
+                onKeyDown={activeEnter}
                 value={text}
               />
             </InputBox>
