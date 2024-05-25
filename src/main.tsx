@@ -12,8 +12,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <GlobalStyle />
     <Routes>
       <Route path='/' element={<App />}>
+        <Route index element={<Products />} />
         <Route path='products'>
-          <Route index element={<Products />} />
           <Route path=':id' element={<Detail />} />
         </Route>
         <Route path='signin' element={<SignIn />} />
