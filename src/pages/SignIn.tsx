@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-interface Inputs {
+import { validateEmail, validatePassword } from '../utils/regex.ts';
+interface LoginUser {
   email: string;
   password: string;
 }
@@ -54,63 +54,83 @@ const LoginButton = styled.button`
   margin-top: 30px;
 `;
 
-export default function SignIn() {
-  const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<Inputs>();
+const SignIn: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const storageData = localStorage.getItem('key');
-    if (storageData !== null) {
-      const signUpStorageData = JSON.parse(storageData);
-      if (
-        signUpStorageData.email === data.email &&
-        signUpStorageData.password === data.password
-      ) {
-        navigate('/');
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    let isEmailValid = validateEmail(email);
+    let isPasswordValid = validatePassword(password);
+
+    if (isEmailValid || isPasswordValid) {
+      setEmailError(isEmailValid);
+      setPasswordError(isPasswordValid);
+      return;
+    }
+
+    const users: LoginUser[] = JSON.parse(
+      localStorage.getItem('users') || '[]',
+    );
+
+    const user = users.find((user) => user.email === email);
+
+    if (user) {
+      if (user.password === password) {
+        setEmail('');
+        setPassword('');
+        setIsLoggedIn(true);
+        localStorage.setItem('currentUser', email);
       } else {
-        alert('이메일 또는 비밀번호가 일치하지 않습니다.');
+        setPasswordError('이메일 또는 비밀번호가 일치하지 않습니다.');
       }
     } else {
-      alert('사용자 데이터를 찾을 수 없습니다. 회원가입을 먼저 진행해 주세요.');
+      setPasswordError('존재하지 않는 회원입니다.');
     }
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      window.location.href = '/';
+    }
+  }, [isLoggedIn]);
 
   return (
     <Bg>
       <SignInBox>
         <SignInTitle>로그인하고 여러분의 하루를 남겨보세요.</SignInTitle>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit}>
           <EmailInput
             placeholder='이메일'
-            {...register('email', {
-              required: true,
-              pattern: /^[^s@]+@[^s@]+\.[^s@]+$/,
-            })}
+            type='text'
+            value={email}
+            onChange={handleEmailChange}
           />
-          {errors.email && (
-            <ErrorMessage> 올바른 이메일 주소가 아닙니다. </ErrorMessage>
-          )}
+          {emailError && <ErrorMessage> {emailError}</ErrorMessage>}
           <PassWordInput
             placeholder='비밀번호'
             type='password'
-            {...register('password', {
-              required: true,
-              pattern:
-                /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            })}
+            value={password}
+            onChange={handlePasswordChange}
           />
-          {errors.password && (
-            <ErrorMessage>
-              비밀번호는 영문, 숫자 조합 8자 이상 입력해 주세요.
-            </ErrorMessage>
-          )}
-          <LoginButton disabled={isSubmitting}>로그인하기</LoginButton>
+          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+          <LoginButton type='submit'>로그인하기</LoginButton>
         </form>
       </SignInBox>
     </Bg>
   );
-}
+};
+
+export default SignIn;

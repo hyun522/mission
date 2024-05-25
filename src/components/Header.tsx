@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -9,20 +10,27 @@ const LoginLi = styled.li`
 `;
 
 export default function Header() {
-  const localStorageData = localStorage.getItem('key');
-  const storageData = localStorageData ? JSON.parse(localStorageData) : null;
+  const [userEmail, setUserEmail] = useState<string>('');
 
   const handleLogOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    localStorage.removeItem('key');
-    location.reload();
+    localStorage.removeItem('currentUser');
+    setUserEmail('');
   };
+
+  useEffect(() => {
+    const email = localStorage.getItem('currentUser');
+    if (email) {
+      setUserEmail(email);
+    }
+  }, [userEmail]);
+
   return (
     <NavGnb>
-      {storageData !== null ? (
+      {userEmail ? (
         <>
           <LoginLi>
-            <NavLink to='/signin'>{storageData.email}</NavLink>
+            <NavLink to='/signin'>{userEmail}</NavLink>
           </LoginLi>
           <li>
             <NavLink to='/signup' onClick={handleLogOut}>
