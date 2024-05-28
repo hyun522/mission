@@ -6,8 +6,8 @@ import {
 } from '../utils/regex.ts';
 import { useNavigate } from 'react-router-dom';
 interface LoginUser {
-  email: string;
-  password: string;
+  email: string | undefined;
+  password: string | undefined;
 }
 
 const Bg = styled.div`
@@ -61,9 +61,9 @@ const LoginButton = styled.button`
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
 
-  const [inputs, setInputs] = useState({
-    email: '',
-    password: '',
+  const [inputs, setInputs] = useState<LoginUser>({
+    email: undefined,
+    password: undefined,
   });
 
   const [errors, setErrors] = useState({
@@ -83,20 +83,16 @@ const SignIn: React.FC = () => {
     }));
   };
 
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      emailError: validateEmailAndGetMessage(email),
+      passwordError: validatePasswordAndGetMessage(password),
+    }));
+  }, [email, password]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    let isEmailErrorMessage = validateEmailAndGetMessage(email);
-    let isPasswordErrorMessage = validatePasswordAndGetMessage(password);
-
-    if (isEmailErrorMessage || isPasswordErrorMessage) {
-      setErrors({
-        emailError: isEmailErrorMessage,
-        passwordError: isPasswordErrorMessage,
-      });
-      //에러메세지가 있으면 에레메시지를 넣고 폼제출을 중단(=return)
-      return;
-    }
 
     const users: LoginUser[] = JSON.parse(
       localStorage.getItem('users') || '[]',
@@ -111,7 +107,7 @@ const SignIn: React.FC = () => {
           password: '',
         });
         setIsLoggedIn(true);
-        localStorage.setItem('currentUser', email);
+        localStorage.setItem('currentUser', email ?? '');
       } else {
         setErrors({
           emailError: '',
