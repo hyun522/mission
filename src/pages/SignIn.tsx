@@ -58,49 +58,68 @@ const LoginButton = styled.button`
 `;
 
 const SignIn: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [emailError, setEmailError] = useState<string>('');
-  const [passwordError, setPasswordError] = useState<string>('');
+  const [inputs, setInputs] = useState({
+    email: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState({
+    emailError: '',
+    passwordError: '',
+  });
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
+  const { email, password } = inputs;
+  const { emailError, passwordError } = errors;
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInputs((prevInput) => ({
+      ...prevInput,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let isEmailValid = validateEmailAndGetMessage(email);
-    let isPasswordValid = validatePasswordAndGetMessage(password);
+    let isEmailErrorMessage = validateEmailAndGetMessage(email);
+    let isPasswordErrorMessage = validatePasswordAndGetMessage(password);
 
-    if (isEmailValid || isPasswordValid) {
-      setEmailError(isEmailValid);
-      setPasswordError(isPasswordValid);
+    if (isEmailErrorMessage || isPasswordErrorMessage) {
+      setErrors({
+        emailError: isEmailErrorMessage,
+        passwordError: isPasswordErrorMessage,
+      });
+      //에러메세지가 있으면 에레메시지를 넣고 폼제출을 중단(=return)
       return;
     }
 
     const users: LoginUser[] = JSON.parse(
       localStorage.getItem('users') || '[]',
     );
-
+    //email과 일치하는 email 속성을 가진 첫 번째 사용자 객체를 찾는 것 요소를 반환 없을 경우 undefined를 반환합니다.
     const user = users.find((user) => user.email === email);
 
     if (user) {
       if (user.password === password) {
-        setEmail('');
-        setPassword('');
+        setInputs({
+          email: '',
+          password: '',
+        });
         setIsLoggedIn(true);
         localStorage.setItem('currentUser', email);
       } else {
-        setPasswordError('이메일 또는 비밀번호가 일치하지 않습니다.');
+        setErrors({
+          emailError: '',
+          passwordError: '이메일 또는 비밀번호가 일치하지 않습니다.',
+        });
       }
     } else {
-      setPasswordError('존재하지 않는 회원입니다.');
+      setErrors({
+        emailError: '',
+        passwordError: '존재하지 않는 회원입니다.',
+      });
     }
   };
 
@@ -118,15 +137,17 @@ const SignIn: React.FC = () => {
           <EmailInput
             placeholder='이메일'
             type='text'
+            name='email'
             value={email}
-            onChange={handleEmailChange}
+            onChange={handleChange}
           />
           {emailError && <ErrorMessage> {emailError}</ErrorMessage>}
           <PassWordInput
             placeholder='비밀번호'
             type='password'
+            name='password'
             value={password}
-            onChange={handlePasswordChange}
+            onChange={handleChange}
           />
           {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
           <LoginButton type='submit'>로그인하기</LoginButton>
