@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -7,19 +7,20 @@ import {
   validateConfirmPasswordAndGetMessage,
 } from '../utils/regex.ts';
 interface User {
-  email: string;
-  password: string;
+  email: string | undefined;
+  password: string | undefined;
 }
 
 interface InputsState {
-  email: string;
-  password: string;
-  confirmPassword: string;
+  email: string | undefined;
+  password: string | undefined;
+  confirmPassword: string | undefined;
 }
 interface ErrorsState {
   emailError: string;
   passwordError: string;
   confirmPasswordError: string;
+  emailDuplicateError: string;
 }
 
 const Bg = styled.div`
@@ -89,19 +90,25 @@ const LinkText = styled(Link)`
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState<InputsState>({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    email: undefined,
+    password: undefined,
+    confirmPassword: undefined,
   });
 
   const [errors, setErrors] = useState<ErrorsState>({
     emailError: '',
     passwordError: '',
     confirmPasswordError: '',
+    emailDuplicateError: '',
   });
 
   const { email, password, confirmPassword } = inputs;
-  const { emailError, passwordError, confirmPasswordError } = errors;
+  const {
+    emailError,
+    passwordError,
+    confirmPasswordError,
+    emailDuplicateError,
+  } = errors;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -112,7 +119,7 @@ const SignUp: React.FC = () => {
     }));
   };
 
-  const emailDuplicateErrorMessage = (email: string): string => {
+  const emailDuplicateErrorMessage = (email: string | undefined): string => {
     const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
     console.log(users);
     return users.some((user) => user.email === email)
@@ -120,28 +127,40 @@ const SignUp: React.FC = () => {
       : '';
   };
 
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      emailError: validateEmailAndGetMessage(email),
+      emailDuplicateError: emailDuplicateErrorMessage(email),
+    }));
+  }, [email]);
+
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      passwordError: validatePasswordAndGetMessage(password),
+    }));
+  }, [password]);
+
+  useEffect(() => {
+    // setErrors에서 화살표 함수 ()=>() 대신 ()=>({})를 사용하는 이유는 상태 업데이트 함수가 객체를 반환하도록 하기 위함
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      confirmPasswordError: validateConfirmPasswordAndGetMessage(
+        password,
+        confirmPassword,
+      ),
+    }));
+  }, [password, confirmPassword]);
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const isEmailDuplicateErrorMessage = emailDuplicateErrorMessage(email);
-    const isEmailErrorMessage = validateEmailAndGetMessage(email);
-    const isPasswordErrorMessage = validatePasswordAndGetMessage(password);
-    const isConfirmPasswordErrorMessage = validateConfirmPasswordAndGetMessage(
-      password,
-      confirmPassword,
-    );
-
     if (
-      isEmailDuplicateErrorMessage ||
-      isEmailErrorMessage ||
-      isPasswordErrorMessage ||
-      isConfirmPasswordErrorMessage
+      errors.emailError ||
+      errors.passwordError ||
+      errors.confirmPasswordError
     ) {
-      setErrors({
-        emailError: isEmailDuplicateErrorMessage || isEmailErrorMessage,
-        passwordError: isPasswordErrorMessage,
-        confirmPasswordError: isConfirmPasswordErrorMessage,
-      });
       return;
     }
 
@@ -176,6 +195,9 @@ const SignUp: React.FC = () => {
             onChange={handleChange}
           />
           {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+          {emailDuplicateError && (
+            <ErrorMessage>{emailDuplicateError}</ErrorMessage>
+          )}
           <Input
             type='password'
             placeholder='비밀번호'
