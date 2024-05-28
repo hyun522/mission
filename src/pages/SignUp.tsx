@@ -1,12 +1,11 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   validateEmailAndGetMessage,
   validatePasswordAndGetMessage,
   validateConfirmPasswordAndGetMessage,
 } from '../utils/regex.ts';
-
 interface User {
   email: string;
   password: string;
@@ -88,6 +87,7 @@ const LinkText = styled(Link)`
 `;
 
 const SignUp: React.FC = () => {
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState<InputsState>({
     email: '',
     password: '',
@@ -158,7 +158,7 @@ const SignUp: React.FC = () => {
       confirmPassword: '',
     });
 
-    window.location.href = '/signin';
+    navigate('/signin');
   };
 
   return (

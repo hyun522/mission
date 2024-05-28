@@ -4,6 +4,7 @@ import {
   validateEmailAndGetMessage,
   validatePasswordAndGetMessage,
 } from '../utils/regex.ts';
+import { useNavigate } from 'react-router-dom';
 interface LoginUser {
   email: string;
   password: string;
@@ -58,6 +59,8 @@ const LoginButton = styled.button`
 `;
 
 const SignIn: React.FC = () => {
+  const navigate = useNavigate();
+
   const [inputs, setInputs] = useState({
     email: '',
     password: '',
@@ -125,7 +128,7 @@ const SignIn: React.FC = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      window.location.href = '/';
+      navigate('/');
     }
   }, [isLoggedIn]);
 
