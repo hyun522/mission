@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { validateEmail, validatePassword } from '../utils/regex.ts';
+import {
+  validateEmailAndGetMessage,
+  validatePasswordAndGetMessage,
+} from '../utils/regex.ts';
 interface LoginUser {
   email: string;
   password: string;
@@ -72,8 +75,8 @@ const SignIn: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let isEmailValid = validateEmail(email);
-    let isPasswordValid = validatePassword(password);
+    let isEmailValid = validateEmailAndGetMessage(email);
+    let isPasswordValid = validatePasswordAndGetMessage(password);
 
     if (isEmailValid || isPasswordValid) {
       setEmailError(isEmailValid);

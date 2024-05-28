@@ -2,17 +2,17 @@ export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const passwordRegex =
   /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-export const validateEmail = (email: string): string => {
+export const validateEmailAndGetMessage = (email: string): string => {
   if (!email) {
-    return '이메일을 입력해주세요.';
+    return '이메일을 입력해주세요.'; //true
   } else if (!emailRegex.test(email)) {
-    return '유효한 이메일을 입력해주세요.';
+    return '유효한 이메일을 입력해주세요.'; //true
   } else {
     return '';
   }
 };
 
-export const validatePassword = (password: string): string => {
+export const validatePasswordAndGetMessage = (password: string): string => {
   if (!password) {
     return '비밀번호를 입력해주세요.';
   } else if (!passwordRegex.test(password)) {
@@ -22,7 +22,7 @@ export const validatePassword = (password: string): string => {
   }
 };
 
-export const validateConfirmPassword = (
+export const validateConfirmPasswordAndGetMessage = (
   password: string,
   confirmPassword: string,
 ): string => {
