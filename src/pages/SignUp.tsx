@@ -1,14 +1,26 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  validateEmail,
-  validatePassword,
-  validateConfirmPassword,
+  validateEmailAndGetMessage,
+  validatePasswordAndGetMessage,
+  validateConfirmPasswordAndGetMessage,
 } from '../utils/regex.ts';
 interface User {
-  email: string;
-  password: string;
+  email: string | undefined;
+  password: string | undefined;
+}
+
+interface InputsState {
+  email: string | undefined;
+  password: string | undefined;
+  confirmPassword: string | undefined;
+}
+interface ErrorsState {
+  emailError: string;
+  passwordError: string;
+  confirmPasswordError: string;
+  emailDuplicateError: string;
 }
 
 const Bg = styled.div`
@@ -76,48 +88,79 @@ const LinkText = styled(Link)`
 `;
 
 const SignUp: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [emailError, setEmailError] = useState<string>('');
-  const [passwordError, setPasswordError] = useState<string>('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
+  const navigate = useNavigate();
+  const [inputs, setInputs] = useState<InputsState>({
+    email: undefined,
+    password: undefined,
+    confirmPassword: undefined,
+  });
 
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+  const [errors, setErrors] = useState<ErrorsState>({
+    emailError: '',
+    passwordError: '',
+    confirmPasswordError: '',
+    emailDuplicateError: '',
+  });
+
+  const { email, password, confirmPassword } = inputs;
+  const {
+    emailError,
+    passwordError,
+    confirmPasswordError,
+    emailDuplicateError,
+  } = errors;
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInputs((prevInput) => ({
+      ...prevInput,
+      //inputs[name] = value; 와 같다.
+      [name]: value,
+    }));
   };
 
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
-  const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
-  };
-
-  const emailDuplicateCheck = (email: string): boolean => {
+  const emailDuplicateErrorMessage = (email: string | undefined): string => {
     const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
-    return !users.some((user) => user.email === email);
+    console.log(users);
+    return users.some((user) => user.email === email)
+      ? '이미 사용 중인 이메일입니다.'
+      : '';
   };
+
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      emailError: validateEmailAndGetMessage(email),
+      emailDuplicateError: emailDuplicateErrorMessage(email),
+    }));
+  }, [email]);
+
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      passwordError: validatePasswordAndGetMessage(password),
+    }));
+  }, [password]);
+
+  useEffect(() => {
+    // setErrors에서 화살표 함수 ()=>() 대신 ()=>({})를 사용하는 이유는 상태 업데이트 함수가 객체를 반환하도록 하기 위함
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      confirmPasswordError: validateConfirmPasswordAndGetMessage(
+        password,
+        confirmPassword,
+      ),
+    }));
+  }, [password, confirmPassword]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const isEmailValid = validateEmail(email);
-    const isPasswordValid = validatePassword(password);
-    const isConfirmPasswordValid = validateConfirmPassword(
-      password,
-      confirmPassword,
-    );
 
-    if (isEmailValid || isPasswordValid || isConfirmPasswordValid) {
-      setEmailError(isEmailValid);
-      setPasswordError(isPasswordValid);
-      setConfirmPasswordError(isConfirmPasswordValid);
-      return;
-    }
-
-    if (!emailDuplicateCheck(email)) {
-      setEmailError('이미 사용 중인 이메일입니다.');
+    if (
+      errors.emailError ||
+      errors.passwordError ||
+      errors.confirmPasswordError
+    ) {
       return;
     }
 
@@ -127,10 +170,14 @@ const SignUp: React.FC = () => {
 
     localStorage.setItem('users', JSON.stringify(users));
     alert('회원가입에 성공하였습니다.');
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
-    window.location.href = '/signin';
+
+    setInputs({
+      email: '',
+      password: '',
+      confirmPassword: '',
+    });
+
+    navigate('/signin');
   };
 
   return (
@@ -143,22 +190,28 @@ const SignUp: React.FC = () => {
           <Input
             type='text'
             placeholder='이메일'
+            name='email'
             value={email}
-            onChange={handleEmailChange}
+            onChange={handleChange}
           />
           {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+          {emailDuplicateError && (
+            <ErrorMessage>{emailDuplicateError}</ErrorMessage>
+          )}
           <Input
             type='password'
             placeholder='비밀번호'
+            name='password'
             value={password}
-            onChange={handlePasswordChange}
+            onChange={handleChange}
           />
           {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
           <Input
             type='password'
             placeholder='비밀번호확인'
+            name='confirmPassword'
             value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
+            onChange={handleChange}
           />
           {confirmPasswordError && (
             <ErrorMessage>{confirmPasswordError}</ErrorMessage>

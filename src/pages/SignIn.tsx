@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { validateEmail, validatePassword } from '../utils/regex.ts';
+import {
+  validateEmailAndGetMessage,
+  validatePasswordAndGetMessage,
+} from '../utils/regex.ts';
+import { useNavigate } from 'react-router-dom';
 interface LoginUser {
-  email: string;
-  password: string;
+  email: string | undefined;
+  password: string | undefined;
 }
 
 const Bg = styled.div`
@@ -55,55 +59,72 @@ const LoginButton = styled.button`
 `;
 
 const SignIn: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [emailError, setEmailError] = useState<string>('');
-  const [passwordError, setPasswordError] = useState<string>('');
+  const navigate = useNavigate();
+
+  const [inputs, setInputs] = useState<LoginUser>({
+    email: undefined,
+    password: undefined,
+  });
+
+  const [errors, setErrors] = useState({
+    emailError: '',
+    passwordError: '',
+  });
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+  const { email, password } = inputs;
+  const { emailError, passwordError } = errors;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInputs((prevInput) => ({
+      ...prevInput,
+      [name]: value,
+    }));
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      emailError: validateEmailAndGetMessage(email),
+      passwordError: validatePasswordAndGetMessage(password),
+    }));
+  }, [email, password]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let isEmailValid = validateEmail(email);
-    let isPasswordValid = validatePassword(password);
-
-    if (isEmailValid || isPasswordValid) {
-      setEmailError(isEmailValid);
-      setPasswordError(isPasswordValid);
-      return;
-    }
-
     const users: LoginUser[] = JSON.parse(
       localStorage.getItem('users') || '[]',
     );
-
+    //email과 일치하는 email 속성을 가진 첫 번째 사용자 객체를 찾는 것 요소를 반환 없을 경우 undefined를 반환합니다.
     const user = users.find((user) => user.email === email);
 
     if (user) {
       if (user.password === password) {
-        setEmail('');
-        setPassword('');
+        setInputs({
+          email: '',
+          password: '',
+        });
         setIsLoggedIn(true);
-        localStorage.setItem('currentUser', email);
+        localStorage.setItem('currentUser', email ?? '');
       } else {
-        setPasswordError('이메일 또는 비밀번호가 일치하지 않습니다.');
+        setErrors({
+          emailError: '',
+          passwordError: '이메일 또는 비밀번호가 일치하지 않습니다.',
+        });
       }
     } else {
-      setPasswordError('존재하지 않는 회원입니다.');
+      setErrors({
+        emailError: '',
+        passwordError: '존재하지 않는 회원입니다.',
+      });
     }
   };
 
   useEffect(() => {
     if (isLoggedIn) {
-      window.location.href = '/';
+      navigate('/');
     }
   }, [isLoggedIn]);
 
@@ -115,15 +136,17 @@ const SignIn: React.FC = () => {
           <EmailInput
             placeholder='이메일'
             type='text'
+            name='email'
             value={email}
-            onChange={handleEmailChange}
+            onChange={handleChange}
           />
           {emailError && <ErrorMessage> {emailError}</ErrorMessage>}
           <PassWordInput
             placeholder='비밀번호'
             type='password'
+            name='password'
             value={password}
-            onChange={handlePasswordChange}
+            onChange={handleChange}
           />
           {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
           <LoginButton type='submit'>로그인하기</LoginButton>
