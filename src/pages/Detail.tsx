@@ -61,6 +61,63 @@ const Rating = styled.p`
   margin-top: 10px;
 `;
 
+const CountTotalPrice = styled.div`
+  margin-top: 40px;
+`;
+
+const CountTotalPriceTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Counter = styled.div`
+  /* width: 50px; */
+  display: flex;
+  align-items: center;
+`;
+
+const CounterButton = styled.button`
+  width: 40px;
+  height: 40px;
+  border: 1px solid #888;
+  color: #888;
+  font-size: 20px;
+  &:hover {
+    color: #000;
+  }
+`;
+
+const CounterText = styled.span`
+  width: 50px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #888;
+  border-top: 1px solid #888;
+`;
+
+const ShoppingBasketPurchase = styled.div`
+  margin-top: 10px;
+  display: flex;
+  justify-content: end;
+`;
+
+const ShoppingBasket = styled.button`
+  padding: 10px 20px;
+  background-color: #fff;
+  border: 1px solid #888;
+  border-radius: 2px;
+  &:hover {
+    border: 1px solid #000;
+  }
+`;
+
+const Purchase = styled(ShoppingBasket)`
+  margin-left: 10px;
+`;
+
 //1. 수량버튼 클릭시 수량과 금액 변경
 //useState) 초기수량, 초기총가격 /  함수) 수량과 상세페이지 객체데이터의 변경(?)이 있으면 총가격을 변경 시켜준다. , - + 클릭시 변경되는 함수
 //2. 장바수니 구매 버튼과 ui 작업
@@ -124,20 +181,21 @@ export default function Detail() {
               Rating: {product.rating.rate} ({product.rating.count} reviews)
             </Rating>
           </div>
-          <div>
-            <div>
-              <div>
-                <button onClick={handleDecrease}>-</button>
-                {quantity}
-                <button onClick={handleIncrease}>+</button>
-              </div>
-              <div>{totalPrice.toFixed(2)}</div>
-            </div>
-            <div>
-              <button>장바구니</button>
-              <button>구매하기</button>
-            </div>
-          </div>
+          <CountTotalPrice>
+            <CountTotalPriceTop>
+              <Counter>
+                <CounterButton onClick={handleDecrease}>-</CounterButton>
+                <CounterText> {quantity}</CounterText>
+
+                <CounterButton onClick={handleIncrease}>+</CounterButton>
+              </Counter>
+              <div>$ {totalPrice.toFixed(2)}</div>
+            </CountTotalPriceTop>
+            <ShoppingBasketPurchase>
+              <ShoppingBasket>장바구니</ShoppingBasket>
+              <Purchase>구매하기</Purchase>
+            </ShoppingBasketPurchase>
+          </CountTotalPrice>
         </TextContext>
       </Main>
     </Bg>
