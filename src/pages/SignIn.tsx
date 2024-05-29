@@ -1,9 +1,13 @@
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import {
+  validateEmailAndGetMessage,
+  validatePasswordAndGetMessage,
+} from '../utils/regex.ts';
 import { useNavigate } from 'react-router-dom';
-interface Inputs {
-  email: string;
-  password: string;
+interface LoginUser {
+  email: string | undefined;
+  password: string | undefined;
 }
 
 const Bg = styled.div`
@@ -54,63 +58,102 @@ const LoginButton = styled.button`
   margin-top: 30px;
 `;
 
-export default function SignIn() {
+const SignIn: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const storageData = localStorage.getItem('key');
-    if (storageData !== null) {
-      const signUpStorageData = JSON.parse(storageData);
-      if (
-        signUpStorageData.email === data.email &&
-        signUpStorageData.password === data.password
-      ) {
-        navigate('/');
+  const [inputs, setInputs] = useState<LoginUser>({
+    email: undefined,
+    password: undefined,
+  });
+
+  const [errors, setErrors] = useState({
+    emailError: '',
+    passwordError: '',
+  });
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  const { email, password } = inputs;
+  const { emailError, passwordError } = errors;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInputs((prevInput) => ({
+      ...prevInput,
+      [name]: value,
+    }));
+  };
+
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      emailError: validateEmailAndGetMessage(email),
+      passwordError: validatePasswordAndGetMessage(password),
+    }));
+  }, [email, password]);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const users: LoginUser[] = JSON.parse(
+      localStorage.getItem('users') || '[]',
+    );
+    //email과 일치하는 email 속성을 가진 첫 번째 사용자 객체를 찾는 것 요소를 반환 없을 경우 undefined를 반환합니다.
+    const user = users.find((user) => user.email === email);
+
+    if (user) {
+      if (user.password === password) {
+        setInputs({
+          email: '',
+          password: '',
+        });
+        setIsLoggedIn(true);
+        localStorage.setItem('currentUser', email ?? '');
       } else {
-        alert('이메일 또는 비밀번호가 일치하지 않습니다.');
+        setErrors({
+          emailError: '',
+          passwordError: '이메일 또는 비밀번호가 일치하지 않습니다.',
+        });
       }
     } else {
-      alert('사용자 데이터를 찾을 수 없습니다. 회원가입을 먼저 진행해 주세요.');
+      setErrors({
+        emailError: '',
+        passwordError: '존재하지 않는 회원입니다.',
+      });
     }
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn]);
 
   return (
     <Bg>
       <SignInBox>
         <SignInTitle>로그인하고 여러분의 하루를 남겨보세요.</SignInTitle>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit}>
           <EmailInput
             placeholder='이메일'
-            {...register('email', {
-              required: true,
-              pattern: /^[^s@]+@[^s@]+\.[^s@]+$/,
-            })}
+            type='text'
+            name='email'
+            value={email}
+            onChange={handleChange}
           />
-          {errors.email && (
-            <ErrorMessage> 올바른 이메일 주소가 아닙니다. </ErrorMessage>
-          )}
+          {emailError && <ErrorMessage> {emailError}</ErrorMessage>}
           <PassWordInput
             placeholder='비밀번호'
             type='password'
-            {...register('password', {
-              required: true,
-              pattern:
-                /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            })}
+            name='password'
+            value={password}
+            onChange={handleChange}
           />
-          {errors.password && (
-            <ErrorMessage>
-              비밀번호는 영문, 숫자 조합 8자 이상 입력해 주세요.
-            </ErrorMessage>
-          )}
-          <LoginButton disabled={isSubmitting}>로그인하기</LoginButton>
+          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+          <LoginButton type='submit'>로그인하기</LoginButton>
         </form>
       </SignInBox>
     </Bg>
   );
-}
+};
+
+export default SignIn;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+
 interface Product {
   id: number;
   title: string;
@@ -10,6 +11,7 @@ interface Product {
   image: string;
   rating: { rate: number; count: number };
 }
+
 
 const Bg = styled.div`
   display: flex;
@@ -59,6 +61,7 @@ const Price = styled.p`
 const Rating = styled.p`
   margin-top: 10px;
 `;
+
 
 export default function Detail() {
   const { id } = useParams();

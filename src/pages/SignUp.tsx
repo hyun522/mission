@@ -1,11 +1,26 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  validateEmailAndGetMessage,
+  validatePasswordAndGetMessage,
+  validateConfirmPasswordAndGetMessage,
+} from '../utils/regex.ts';
+interface User {
+  email: string | undefined;
+  password: string | undefined;
+}
 
-interface Inputs {
-  email: string;
-  password: string;
-  checkPassword: string;
+interface InputsState {
+  email: string | undefined;
+  password: string | undefined;
+  confirmPassword: string | undefined;
+}
+interface ErrorsState {
+  emailError: string;
+  passwordError: string;
+  confirmPasswordError: string;
+  emailDuplicateError: string;
 }
 
 const Bg = styled.div`
@@ -16,39 +31,45 @@ const Bg = styled.div`
 `;
 
 const SignUpBox = styled.div`
-  width: 30dvw;
+  width: 30vw;
 `;
 
 const SignUpTitle = styled.p`
-  width: 25dvw;
   line-height: 30px;
-  margin: 0 auto;
   font-size: 20px;
   margin-bottom: 30px;
   text-align: center;
 `;
 
-const EmailInput = styled.input`
+const Input = styled.input`
   width: 100%;
   padding: 15px;
   border-radius: 50px;
   border: 1px solid #ddd;
+  margin-bottom: 20px;
 `;
-
-const PassWordInput = styled(EmailInput)`
-  margin-top: 20px;
-`;
-
-const CheckPassWordInput = styled(PassWordInput)``;
 
 const ErrorMessage = styled.div`
   font-size: 12px;
   color: #e22424;
-  margin: 5px 0 0 5px;
+  margin: -15px 0 15px 10px;
 `;
 
-const ErrorMessageCheckPassword = styled(ErrorMessage)`
-  margin: 5px 0 15px 5px;
+const PasswordValidate = styled.p`
+  font-size: 12px;
+  margin-left: 5px;
+  color: #666;
+`;
+
+const Button = styled.button`
+  background-color: #ddd;
+  width: 100%;
+  color: #fff;
+  padding: 15px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
 `;
 
 const GoLogin = styled.div`
@@ -59,21 +80,6 @@ const GoLogin = styled.div`
   color: #777;
 `;
 
-const NextButton = styled.button`
-  background-color: #ddd;
-  width: 100%;
-  color: #fff;
-  padding: 15px;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-`;
-const PasswordValidate = styled.p`
-  font-size: 12px;
-  margin: 15px 0 30px 5px;
-  color: #666;
-`;
-
 const LinkText = styled(Link)`
   font-size: 14px;
   color: #444;
@@ -81,18 +87,96 @@ const LinkText = styled(Link)`
   text-decoration: underline;
 `;
 
-export default function SignUp() {
+const SignUp: React.FC = () => {
   const navigate = useNavigate();
+  const [inputs, setInputs] = useState<InputsState>({
+    email: undefined,
+    password: undefined,
+    confirmPassword: undefined,
+  });
 
+  const [errors, setErrors] = useState<ErrorsState>({
+    emailError: '',
+    passwordError: '',
+    confirmPasswordError: '',
+    emailDuplicateError: '',
+  });
+
+  const { email, password, confirmPassword } = inputs;
   const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm<Inputs>();
+    emailError,
+    passwordError,
+    confirmPasswordError,
+    emailDuplicateError,
+  } = errors;
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    localStorage.setItem('key', JSON.stringify(data));
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInputs((prevInput) => ({
+      ...prevInput,
+      //inputs[name] = value; 와 같다.
+      [name]: value,
+    }));
+  };
+
+  const emailDuplicateErrorMessage = (email: string | undefined): string => {
+    const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+    console.log(users);
+    return users.some((user) => user.email === email)
+      ? '이미 사용 중인 이메일입니다.'
+      : '';
+  };
+
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      emailError: validateEmailAndGetMessage(email),
+      emailDuplicateError: emailDuplicateErrorMessage(email),
+    }));
+  }, [email]);
+
+  useEffect(() => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      passwordError: validatePasswordAndGetMessage(password),
+    }));
+  }, [password]);
+
+  useEffect(() => {
+    // setErrors에서 화살표 함수 ()=>() 대신 ()=>({})를 사용하는 이유는 상태 업데이트 함수가 객체를 반환하도록 하기 위함
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      confirmPasswordError: validateConfirmPasswordAndGetMessage(
+        password,
+        confirmPassword,
+      ),
+    }));
+  }, [password, confirmPassword]);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (
+      errors.emailError ||
+      errors.passwordError ||
+      errors.confirmPasswordError
+    ) {
+      return;
+    }
+
+    const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+
+    users.push({ email, password });
+
+    localStorage.setItem('users', JSON.stringify(users));
+    alert('회원가입에 성공하였습니다.');
+
+    setInputs({
+      email: '',
+      password: '',
+      confirmPassword: '',
+    });
+
     navigate('/signin');
   };
 
@@ -102,61 +186,48 @@ export default function SignUp() {
         <SignUpTitle>
           회원가입을 하고 모든 서비스를 무료로 이용하세요.
         </SignUpTitle>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <EmailInput
+        <form onSubmit={handleSubmit}>
+          <Input
+            type='text'
             placeholder='이메일'
-            {...register('email', {
-              required: true,
-              pattern: /^[^s@]+@[^s@]+\.[^s@]+$/,
-            })}
+            name='email'
+            value={email}
+            onChange={handleChange}
           />
-          {errors.email && (
-            <ErrorMessage> 올바른 이메일 주소가 아닙니다. </ErrorMessage>
+          {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+          {emailDuplicateError && (
+            <ErrorMessage>{emailDuplicateError}</ErrorMessage>
           )}
-
-          <PassWordInput
+          <Input
+            type='password'
             placeholder='비밀번호'
-            type='password'
-            {...register('password', {
-              required: true,
-              pattern:
-                /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            })}
+            name='password'
+            value={password}
+            onChange={handleChange}
           />
-          {errors.password && (
-            <ErrorMessage>
-              비밀번호는 영문, 숫자 조합 8자 이상 입력해 주세요.
-            </ErrorMessage>
-          )}
-
-          <CheckPassWordInput
-            placeholder='비밀번호 확인'
+          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+          <Input
             type='password'
-            {...register('checkPassword', {
-              required: true,
-              validate: (value: string) => {
-                if (watch('password') !== value) {
-                  return 'not match';
-                }
-              },
-            })}
+            placeholder='비밀번호확인'
+            name='confirmPassword'
+            value={confirmPassword}
+            onChange={handleChange}
           />
-          {errors.checkPassword && (
-            <ErrorMessageCheckPassword>
-              비밀번호가 일치하지 않습니다.
-            </ErrorMessageCheckPassword>
+          {confirmPasswordError && (
+            <ErrorMessage>{confirmPasswordError}</ErrorMessage>
           )}
           <PasswordValidate>
             ⚠︎ 비밀번호는 영어 소문자, 숫자, 특수문자 포함 8-20자
           </PasswordValidate>
-
-          <NextButton disabled={isSubmitting}>다음</NextButton>
+          <Button type='submit'>회원가입</Button>
         </form>
         <GoLogin>
-          <p>이미회원이신가요?</p>
+          <p>이미 회원이신가요?</p>
           <LinkText to='/signin'>로그인하기</LinkText>
         </GoLogin>
       </SignUpBox>
     </Bg>
   );
-}
+};
+
+export default SignUp;
