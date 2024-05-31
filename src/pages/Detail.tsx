@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { useCart } from '../contexts/CartContext';
 
 interface Product {
   id: number;
@@ -118,24 +119,20 @@ const Purchase = styled(ShoppingBasket)`
   margin-left: 10px;
 `;
 
-//1. 수량버튼 클릭시 수량과 금액 변경
-//useState) 초기수량, 초기총가격 /  함수) 수량과 상세페이지 객체데이터의 변경(?)이 있으면 총가격을 변경 시켜준다. , - + 클릭시 변경되는 함수
-//2. 장바수니 구매 버튼과 ui 작업
-//3. 장바구니 클릭시 지정한 수량과 가격 그대로 장바구니 페이지로 이동
-
 export default function Detail() {
   const { id } = useParams();
-  const [product, setProduct] = useState<Product>(); //상세페이지 데이터 받아옴
-  const [quantity, setQuantity] = useState(1); // 초기 수량
-  const [totalPrice, setTotalPrice] = useState(0); // 초기 총 가격
+  const [product, setProduct] = useState<Product>();
+  const [quantity, setQuantity] = useState<number>(1);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     async function fetchProduct() {
       try {
         const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-        const data = await res.json();
+        const data: Product = await res.json();
         setProduct(data);
-        setTotalPrice(data.price); // 초기 총 가격 설정
+        setTotalPrice(data.price);
       } catch (error) {
         console.error(error);
       }
@@ -144,11 +141,9 @@ export default function Detail() {
     fetchProduct();
   }, [id]);
 
-  //추가
   useEffect(() => {
     if (product) {
-      setTotalPrice(product.price * quantity); // 수량 변경 시 총 가격 업데이트
-      //product에서 가져와야 하는 이유는 수량이 몇개이느냐에 따라 변경되지 않는 초기값 즉 원본값에서 곱해야지 원하는 값을 얻을 수 있기 떄문
+      setTotalPrice(product.price * quantity);
     }
   }, [quantity, product]);
 
@@ -159,6 +154,14 @@ export default function Detail() {
   const handleDecrease = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product, quantity, totalPrice);
+    } else {
+      console.error('Product is undefined.');
     }
   };
 
@@ -192,7 +195,11 @@ export default function Detail() {
               <div>$ {totalPrice.toFixed(2)}</div>
             </CountTotalPriceTop>
             <ShoppingBasketPurchase>
-              <ShoppingBasket>장바구니</ShoppingBasket>
+              <Link to='/cart'>
+                <ShoppingBasket onClick={handleAddToCart}>
+                  장바구니
+                </ShoppingBasket>
+              </Link>
               <Purchase>구매하기</Purchase>
             </ShoppingBasketPurchase>
           </CountTotalPrice>
