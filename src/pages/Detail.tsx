@@ -119,6 +119,13 @@ const Purchase = styled(ShoppingBasket)`
   margin-left: 10px;
 `;
 
+// @TODO
+// 장바구니 버튼 클릭시 이동할껀지에 대한 경고창 ✅
+// 장바구니 담긴 제품의 수량을 변경 할 수 있어야 한다.
+//추가)
+// header 에 main으로 갈수 있도록 해주기
+// 장바구니의 같은 제품은 수량만 변경해주기
+
 export default function Detail() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product>();
@@ -158,7 +165,11 @@ export default function Detail() {
   };
 
   const handleAddToCart = () => {
-    if (product) {
+    const userConfirmed = window.confirm('장바구니에 추가하시겠습니까?');
+    // window.confirm
+    //확인과 취소의 두 가지 선택지를 사용자에게 제공 boolean값 제공
+    //<-> alert : 단순한 알림 역할
+    if (userConfirmed && product !== undefined) {
       addToCart(product, quantity, totalPrice);
     } else {
       console.error('Product is undefined.');
