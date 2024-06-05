@@ -25,26 +25,61 @@ interface CartItem {
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: Product, quantity: number, totalPrice: number) => void;
+  increaseQuantity: (productId: number) => void;
+  decreaseQuantity: (productId: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  console.log(cart);
 
   const addToCart = (
     product: Product,
     quantity: number,
     totalPrice: number,
   ) => {
+    //배열에 새로운 값 추가해주기
     setCart((prevCart: CartItem[]) => [
       ...prevCart,
       { product, quantity, totalPrice },
     ]);
   };
 
+  //배열
+  const decreaseQuantity = (productId: number) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.product.id === productId && item.quantity > 1
+          ? {
+              ...item,
+              quantity: item.quantity - 1,
+              totalPrice: (item.quantity - 1) * item.product.price,
+            }
+          : item,
+      ),
+    );
+  };
+
+  const increaseQuantity = (productId: number) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.product.id === productId
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+              totalPrice: (item.quantity + 1) * item.product.price,
+            }
+          : item,
+      ),
+    );
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, decreaseQuantity, increaseQuantity }}
+    >
       {/* cart : 자식 컴포넌트들이 현재 장바구니에 담긴 아이템들을 접근 */}
       {/* addToCart : 자식 컴포넌트들이 장바구니에 아이템을 추가할 수 있게 해줍니다.  */}
       {children}

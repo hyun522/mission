@@ -124,6 +124,7 @@ const Purchase = styled(ShoppingBasket)`
 //추가)
 // header 에 main으로 갈수 있도록 해주기
 // 장바구니의 같은 제품은 수량만 변경해주기
+// 장바구니 UI 바꿔주기
 
 export default function Detail() {
   const { id } = useParams();
