@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useCart } from '../contexts/CartContext';
-
 interface Product {
   id: number;
   title: string;
@@ -132,6 +131,7 @@ export default function Detail() {
   const [quantity, setQuantity] = useState<number>(1);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchProduct() {
@@ -164,12 +164,15 @@ export default function Detail() {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // React의 이벤트 시스템을 사용한다. 때문에 이벤트를 다룰 때는 React 버전의 이벤트를 구체적으로 지정
+    e.preventDefault;
     const userConfirmed = window.confirm('장바구니에 추가하시겠습니까?');
     // window.confirm
     //확인과 취소의 두 가지 선택지를 사용자에게 제공 boolean값 제공
     //<-> alert : 단순한 알림 역할
     if (userConfirmed && product !== undefined) {
+      navigate('/cart');
       addToCart(product, quantity, totalPrice);
     } else {
       console.error('Product is undefined.');
@@ -206,11 +209,9 @@ export default function Detail() {
               <div>$ {totalPrice.toFixed(2)}</div>
             </CountTotalPriceTop>
             <ShoppingBasketPurchase>
-              <Link to='/cart'>
-                <ShoppingBasket onClick={handleAddToCart}>
-                  장바구니
-                </ShoppingBasket>
-              </Link>
+              <ShoppingBasket onClick={handleAddToCart}>
+                장바구니
+              </ShoppingBasket>
               <Purchase>구매하기</Purchase>
             </ShoppingBasketPurchase>
           </CountTotalPrice>
