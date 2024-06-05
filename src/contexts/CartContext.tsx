@@ -33,7 +33,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  console.log(cart);
 
   const addToCart = (
     product: Product,
@@ -81,7 +80,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{ cart, addToCart, decreaseQuantity, increaseQuantity }}
     >
       {/* cart : 자식 컴포넌트들이 현재 장바구니에 담긴 아이템들을 접근 */}
-      {/* addToCart : 자식 컴포넌트들이 장바구니에 아이템을 추가할 수 있게 해줍니다.  */}
+      {/* addToCart : 자식 컴포넌트들이 장바구니에 아이템을 추가할 수 있게 해줌  */}
       {children}
     </CartContext.Provider>
   );

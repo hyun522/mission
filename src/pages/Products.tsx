@@ -13,12 +13,11 @@ interface Product {
 const Bg = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
   min-height: 100dvh;
 `;
 
 const Main = styled.div`
-  max-width: 1200px;
+  min-width: 1200px;
   padding: 50px 0 50px 0;
 `;
 

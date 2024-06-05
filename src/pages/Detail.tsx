@@ -72,7 +72,6 @@ const CountTotalPriceTop = styled.div`
 `;
 
 const Counter = styled.div`
-  /* width: 50px; */
   display: flex;
   align-items: center;
 `;
