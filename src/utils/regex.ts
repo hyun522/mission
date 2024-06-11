@@ -6,11 +6,11 @@ export const validateEmailAndGetMessage = (
   email: string | undefined,
 ): string => {
   if (email === undefined) {
-    return ''; //true
+    return '';
   } else if (!email) {
     return '이메일을 입력해주세요.';
   } else if (!emailRegex.test(email)) {
-    return '유효한 이메일을 입력해주세요.'; //true
+    return '유효한 이메일을 입력해주세요.';
   } else {
     return '';
   }
