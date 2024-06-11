@@ -117,14 +117,6 @@ const Purchase = styled(ShoppingBasket)`
   margin-left: 10px;
 `;
 
-// @TODO
-// 장바구니 버튼 클릭시 이동할껀지에 대한 경고창 ✅
-// 장바구니 담긴 제품의 수량을 변경 할 수 있어야 한다.
-//추가)
-// header 에 main으로 갈수 있도록 해주기
-// 장바구니의 같은 제품은 수량만 변경해주기
-// 장바구니 UI 바꿔주기
-
 export default function Detail() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product>();
