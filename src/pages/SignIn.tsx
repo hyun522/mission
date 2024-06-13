@@ -5,6 +5,8 @@ import {
   validatePasswordAndGetMessage,
 } from '../utils/regex.ts';
 import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../contexts/UserContext.tsx';
+
 interface LoginUser {
   email: string | undefined;
   password: string | undefined;
@@ -75,6 +77,8 @@ const SignIn: React.FC = () => {
   const { email, password } = inputs;
   const { emailError, passwordError } = errors;
 
+  const { login } = useUserContext();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputs((prevInput) => ({
@@ -120,6 +124,7 @@ const SignIn: React.FC = () => {
       password: '',
     });
     setIsLoggedIn(true);
+    login(user);
     localStorage.setItem('currentUser', email ?? '');
   };
 
