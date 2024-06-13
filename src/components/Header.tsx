@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useUserContext } from '../contexts/UserContext';
 
@@ -12,11 +12,13 @@ const LoginLi = styled.li`
 
 const Header: React.FC = () => {
   const { user, logout } = useUserContext();
+  const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState<string | undefined>('');
 
-  const handleLogOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleLogOut = (e: React.MouseEvent<HTMLLIElement>) => {
     e.preventDefault();
     logout();
+    navigate('/signin');
   };
 
   useEffect(() => {
@@ -30,11 +32,7 @@ const Header: React.FC = () => {
       {user ? (
         <>
           <LoginLi>{userEmail}</LoginLi>
-          <li>
-            <NavLink to='/signin' onClick={handleLogOut}>
-              로그아웃
-            </NavLink>
-          </li>
+          <li onClick={handleLogOut}>로그아웃</li>
         </>
       ) : (
         <>
