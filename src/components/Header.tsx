@@ -29,11 +29,9 @@ export default function Header() {
     <NavGnb>
       {userEmail ? (
         <>
-          <LoginLi>
-            <NavLink to='/signin'>{userEmail}</NavLink>
-          </LoginLi>
+          <LoginLi>{userEmail}</LoginLi>
           <li>
-            <NavLink to='/signup' onClick={handleLogOut}>
+            <NavLink to='/signin' onClick={handleLogOut}>
               로그아웃
             </NavLink>
           </li>
