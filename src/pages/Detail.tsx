@@ -4,16 +4,6 @@ import styled from 'styled-components';
 import { useCart } from '../contexts/CartContext';
 import { ProductTs } from '../lib/interface';
 
-// interface Product {
-//   id: number;
-//   title: string;
-//   price: number;
-//   description: string;
-//   category: number;
-//   image: string;
-//   rating: { rate: number; count: number };
-// }
-
 const Bg = styled.div`
   display: flex;
   justify-content: center;
