@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { BaseProductTs } from '../lib/interface';
+import { ProductTs } from '../lib/interface';
 
 const Bg = styled.div`
   display: flex;
@@ -62,7 +62,9 @@ const Rating = styled.p`
 `;
 
 export default function Products() {
-  const [products, setProducts] = useState<BaseProductTs[]>([]);
+  //usestate는 하나에 하나의 역할만 한다. products는 api를 담는 역할 sortedproducts를 담는 역할
+  const [products, setProducts] = useState<ProductTs[]>([]);
+  const [sortedProducts, setSortedProducts] = useState<ProductTs[]>([]);
   const [sortBy, setSortBy] = useState<string>('');
 
   useEffect(() => {
@@ -71,7 +73,6 @@ export default function Products() {
         const res = await fetch('https://fakestoreapi.com/products');
         const data = await res.json();
         setProducts(data);
-        console.log(data);
       } catch (error) {
         console.log(error);
       }
@@ -79,20 +80,29 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  const productsSortedByPrice = [...products].sort((a, b) => a.price - b.price);
-  const productSortedByRating = [...products].sort(
-    (a, b) => b.rating.rate - a.rating.rate,
-  );
+  //렌더링 될때 마다 변동 된다니.. 어째서 ??
+  //why useMemo를 사용하지 않는걸까?
 
-  const getSortedProducts = () => {
-    if (sortBy === 'price') {
-      return productsSortedByPrice;
-    } else if (sortBy === 'rating') {
-      return productSortedByRating;
-    } else {
-      return products;
-    }
-  };
+  useEffect(() => {
+    const productsSortedByPrice = [...products].sort(
+      (a, b) => a.price - b.price,
+    );
+    const productsSortedByRating = [...products].sort(
+      (a, b) => b.rating.rate - a.rating.rate,
+    );
+
+    const getSortedProducts = () => {
+      if (sortBy === 'price') {
+        return productsSortedByPrice;
+      } else if (sortBy === 'rating') {
+        return productsSortedByRating;
+      } else {
+        return products;
+      }
+    };
+
+    setSortedProducts(getSortedProducts());
+  }, [sortBy, products]);
 
   return (
     <Bg>
@@ -103,7 +113,7 @@ export default function Products() {
           <ListItem onClick={() => setSortBy('rating')}>평점순</ListItem>
         </List>
         <Context>
-          {getSortedProducts().map((product) => (
+          {sortedProducts.map((product) => (
             <ContextShoppingItem
               to={`/products/${product.id}`}
               key={product.id}
