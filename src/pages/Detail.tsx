@@ -2,15 +2,17 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useCart } from '../contexts/CartContext';
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: number;
-  image: string;
-  rating: { rate: number; count: number };
-}
+import { ProductTs } from '../lib/interface';
+
+// interface Product {
+//   id: number;
+//   title: string;
+//   price: number;
+//   description: string;
+//   category: number;
+//   image: string;
+//   rating: { rate: number; count: number };
+// }
 
 const Bg = styled.div`
   display: flex;
@@ -119,7 +121,7 @@ const Purchase = styled(ShoppingBasket)`
 
 export default function Detail() {
   const { id } = useParams();
-  const [product, setProduct] = useState<Product>();
+  const [product, setProduct] = useState<ProductTs>();
   const [quantity, setQuantity] = useState<number>(1);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const { addToCart } = useCart();
@@ -129,7 +131,7 @@ export default function Detail() {
     async function fetchProduct() {
       try {
         const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-        const data: Product = await res.json();
+        const data: ProductTs = await res.json();
         setProduct(data);
         setTotalPrice(data.price);
       } catch (error) {

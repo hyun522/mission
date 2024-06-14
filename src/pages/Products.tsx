@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  rating: { rate: number; count: number };
-}
+import { BaseProductTs } from '../lib/interface';
 
 const Bg = styled.div`
   display: flex;
@@ -69,7 +62,7 @@ const Rating = styled.p`
 `;
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<BaseProductTs[]>([]);
   const [sortBy, setSortBy] = useState<string>('');
 
   useEffect(() => {
@@ -78,6 +71,7 @@ export default function Products() {
         const res = await fetch('https://fakestoreapi.com/products');
         const data = await res.json();
         setProducts(data);
+        console.log(data);
       } catch (error) {
         console.log(error);
       }
