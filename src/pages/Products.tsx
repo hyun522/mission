@@ -32,7 +32,7 @@ const Context = styled.div`
   flex-wrap: wrap;
 `;
 
-const ContextShoppingItem = styled(Link)`
+const ProductLinkCard = styled(Link)`
   width: 280px;
 `;
 
@@ -62,7 +62,6 @@ const Rating = styled.p`
 `;
 
 export default function Products() {
-  //usestate는 하나에 하나의 역할만 한다. products는 api를 담는 역할 sortedproducts를 담는 역할
   const [products, setProducts] = useState<ProductTs[]>([]);
   const [sortedProducts, setSortedProducts] = useState<ProductTs[]>([]);
   const [sortBy, setSortBy] = useState<string>('');
@@ -80,7 +79,6 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  //렌더링 될때 마다 변동 된다니.. 어째서 ??
   //why useMemo를 사용하지 않는걸까?
 
   useEffect(() => {
@@ -114,10 +112,7 @@ export default function Products() {
         </List>
         <Context>
           {sortedProducts.map((product) => (
-            <ContextShoppingItem
-              to={`/products/${product.id}`}
-              key={product.id}
-            >
+            <ProductLinkCard to={`/products/${product.id}`} key={product.id}>
               <Image src={product.image} alt={product.title} />
               <TextContext>
                 <Title>{product.title}</Title>
@@ -126,7 +121,7 @@ export default function Products() {
                   ⭐️ {product.rating.rate} ({product.rating.count} reviews)
                 </Rating>
               </TextContext>
-            </ContextShoppingItem>
+            </ProductLinkCard>
           ))}
         </Context>
       </Main>
