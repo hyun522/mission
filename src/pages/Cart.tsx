@@ -1,65 +1,65 @@
 import { useCart } from '../contexts/CartContext';
 import styled from 'styled-components';
 
+const Bg = styled.div`
+  display: flex;
+  justify-content: center;
+  min-height: 100dvh;
+`;
+
+const Main = styled.div`
+  min-width: 1200px;
+  padding: 50px 0 50px 0;
+`;
+const Content = styled.div`
+  display: flex;
+  margin-top: 50px;
+`;
+
+const ContentLeft = styled.div`
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const CartLists = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+`;
+
+const ImgBox = styled.div`
+  width: 100px;
+  height: 100px;
+`;
+
+const Img = styled.img`
+  width: 100%;
+  height: 100%;
+`;
+
+const TextBox = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const CountText = styled.p`
+  margin-right: 10px;
+`;
+
+const CountBox = styled.div`
+  display: flex;
+`;
+
+const ContentRight = styled.div`
+  flex: 1;
+`;
+
 export default function Cart() {
   const { cart, increaseQuantity, decreaseQuantity } = useCart();
-
-  const Bg = styled.div`
-    display: flex;
-    justify-content: center;
-    min-height: 100dvh;
-  `;
-
-  const Main = styled.div`
-    min-width: 1200px;
-    padding: 50px 0 50px 0;
-  `;
-  const Content = styled.div`
-    display: flex;
-    margin-top: 50px;
-  `;
-
-  const ContentLeft = styled.div`
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  `;
-
-  const CartLists = styled.div`
-    display: flex;
-    justify-content: space-between;
-    gap: 40px;
-  `;
-
-  const ImgBox = styled.div`
-    width: 100px;
-    height: 100px;
-  `;
-
-  const Img = styled.img`
-    width: 100%;
-    height: 100%;
-  `;
-
-  const TextBox = styled.div`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  `;
-
-  const CountText = styled.p`
-    margin-right: 10px;
-  `;
-
-  const CountBox = styled.div`
-    display: flex;
-  `;
-
-  const ContentRight = styled.div`
-    flex: 1;
-  `;
 
   return (
     <Bg>
