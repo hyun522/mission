@@ -1,4 +1,3 @@
-// src/interfaces.ts
 export interface RatingTs {
   rate: number;
   count: number;

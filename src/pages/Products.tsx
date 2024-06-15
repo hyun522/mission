@@ -79,8 +79,6 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  //why useMemo를 사용하지 않는걸까?
-
   useEffect(() => {
     const productsSortedByPrice = [...products].sort(
       (a, b) => a.price - b.price,

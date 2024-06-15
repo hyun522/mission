@@ -60,8 +60,6 @@ const ContentRight = styled.div`
 
 export default function Cart() {
   const { cart, increaseQuantity, decreaseQuantity } = useCart();
-  console.log(cart);
-  //{product: {…}, quantity: 2, totalPrice: 44.6}
 
   return (
     <Bg>
