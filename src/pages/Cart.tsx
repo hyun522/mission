@@ -60,6 +60,8 @@ const ContentRight = styled.div`
 
 export default function Cart() {
   const { cart, increaseQuantity, decreaseQuantity } = useCart();
+  console.log(cart);
+  //{product: {…}, quantity: 2, totalPrice: 44.6}
 
   return (
     <Bg>
@@ -70,8 +72,8 @@ export default function Cart() {
             {cart.length === 0 ? (
               <p>장바구니가 비어 있습니다.</p>
             ) : (
-              cart.map((item, index) => (
-                <CartLists key={index}>
+              cart.map((item) => (
+                <CartLists key={item.product.id}>
                   <ImgBox>
                     <Img src={item.product.image} alt={item.product.title} />
                   </ImgBox>
