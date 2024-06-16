@@ -121,7 +121,6 @@ const SignUp: React.FC = () => {
 
   const emailDuplicateErrorMessage = (email: string | undefined): string => {
     const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
-    console.log(users);
     return users.some((user) => user.email === email)
       ? '이미 사용 중인 이메일입니다.'
       : '';
@@ -143,7 +142,6 @@ const SignUp: React.FC = () => {
   }, [password]);
 
   useEffect(() => {
-    // setErrors에서 화살표 함수 ()=>() 대신 ()=>({})를 사용하는 이유는 상태 업데이트 함수가 객체를 반환하도록 하기 위함
     setErrors((prevErrors) => ({
       ...prevErrors,
       confirmPasswordError: validateConfirmPasswordAndGetMessage(

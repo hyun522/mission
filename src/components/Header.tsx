@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useUserContext } from '../contexts/UserContext';
 
 const NavGnb = styled.ul`
   display: flex;
@@ -9,34 +10,29 @@ const LoginLi = styled.li`
   margin-right: 10px;
 `;
 
-export default function Header() {
-  const [userEmail, setUserEmail] = useState<string>('');
+const Header: React.FC = () => {
+  const { user, logout } = useUserContext();
+  const navigate = useNavigate();
+  const [userEmail, setUserEmail] = useState<string | undefined>('');
 
-  const handleLogOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleLogOut = (e: React.MouseEvent<HTMLLIElement>) => {
     e.preventDefault();
-    localStorage.removeItem('currentUser');
-    setUserEmail('');
+    logout();
+    navigate('/signin');
   };
 
   useEffect(() => {
-    const email = localStorage.getItem('currentUser');
-    if (email) {
-      setUserEmail(email);
+    if (user) {
+      setUserEmail(user.email);
     }
-  }, [userEmail]);
+  }, [user]);
 
   return (
     <NavGnb>
-      {userEmail ? (
+      {user ? (
         <>
-          <LoginLi>
-            <NavLink to='/signin'>{userEmail}</NavLink>
-          </LoginLi>
-          <li>
-            <NavLink to='/signup' onClick={handleLogOut}>
-              로그아웃
-            </NavLink>
-          </li>
+          <LoginLi>{userEmail}</LoginLi>
+          <li onClick={handleLogOut}>로그아웃</li>
         </>
       ) : (
         <>
@@ -50,4 +46,6 @@ export default function Header() {
       )}
     </NavGnb>
   );
-}
+};
+
+export default Header;

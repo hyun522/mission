@@ -1,30 +1,21 @@
 import React, { createContext, useContext, useState } from 'react';
-// createContext :
-// Context 객체 안에는 Provider라는 컴포넌트가 들어있습니다.
-// 그리고, 그 컴포넌트간에 공유하고자 하는 값을 value 라는 Props로 설정하면 자식 컴포넌트들에서 해당 값에 바로 접근을 할 수 있습니다.
+import { ProductTs } from '../lib/interface';
+//createContext :
+//Context 객체 안에는 Provider라는 컴포넌트가 들어있습니다.
+//그리고, 그 컴포넌트간에 공유하고자 하는 값을 value 라는 Props로 설정하면 자식 컴포넌트들에서 해당 값에 바로 접근을 할 수 있습니다.
 
 //useContext
-// 원하는 컴포넌트에서 useContext 라는 Hook을 사용하여 Context에 넣은 값에 바로 접근할 수 있습니다
-
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: number;
-  image: string;
-  rating: { rate: number; count: number };
-}
+//원하는 컴포넌트에서 useContext 라는 Hook을 사용하여 Context에 넣은 값에 바로 접근할 수 있습니다
 
 interface CartItem {
-  product: Product;
+  product: ProductTs;
   quantity: number;
   totalPrice: number;
 }
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product, quantity: number, totalPrice: number) => void;
+  addToCart: (product: ProductTs, quantity: number, totalPrice: number) => void;
   increaseQuantity: (productId: number) => void;
   decreaseQuantity: (productId: number) => void;
 }
@@ -35,18 +26,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   const addToCart = (
-    product: Product,
+    product: ProductTs,
     quantity: number,
     totalPrice: number,
   ) => {
-    //배열에 새로운 값 추가해주기
     setCart((prevCart: CartItem[]) => [
       ...prevCart,
       { product, quantity, totalPrice },
     ]);
   };
 
-  //배열
   const decreaseQuantity = (productId: number) => {
     setCart((prevCart) =>
       prevCart.map((item) =>

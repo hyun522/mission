@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  rating: { rate: number; count: number };
-}
+import { ProductTs } from '../lib/interface';
 
 const Bg = styled.div`
   display: flex;
@@ -39,7 +32,7 @@ const Context = styled.div`
   flex-wrap: wrap;
 `;
 
-const ContextShoppingItem = styled(Link)`
+const ProductLinkCard = styled(Link)`
   width: 280px;
 `;
 
@@ -69,7 +62,8 @@ const Rating = styled.p`
 `;
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductTs[]>([]);
+  const [sortedProducts, setSortedProducts] = useState<ProductTs[]>([]);
   const [sortBy, setSortBy] = useState<string>('');
 
   useEffect(() => {
@@ -85,20 +79,26 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  const productsSortedByPrice = [...products].sort((a, b) => a.price - b.price);
-  const productSortedByRating = [...products].sort(
-    (a, b) => b.rating.rate - a.rating.rate,
-  );
+  useEffect(() => {
+    const productsSortedByPrice = [...products].sort(
+      (a, b) => a.price - b.price,
+    );
+    const productsSortedByRating = [...products].sort(
+      (a, b) => b.rating.rate - a.rating.rate,
+    );
 
-  const getSortedProducts = () => {
-    if (sortBy === 'price') {
-      return productsSortedByPrice;
-    } else if (sortBy === 'rating') {
-      return productSortedByRating;
-    } else {
-      return products;
-    }
-  };
+    const getSortedProducts = () => {
+      if (sortBy === 'price') {
+        return productsSortedByPrice;
+      } else if (sortBy === 'rating') {
+        return productsSortedByRating;
+      } else {
+        return products;
+      }
+    };
+
+    setSortedProducts(getSortedProducts());
+  }, [sortBy, products]);
 
   return (
     <Bg>
@@ -109,11 +109,8 @@ export default function Products() {
           <ListItem onClick={() => setSortBy('rating')}>평점순</ListItem>
         </List>
         <Context>
-          {getSortedProducts().map((product) => (
-            <ContextShoppingItem
-              to={`/products/${product.id}`}
-              key={product.id}
-            >
+          {sortedProducts.map((product) => (
+            <ProductLinkCard to={`/products/${product.id}`} key={product.id}>
               <Image src={product.image} alt={product.title} />
               <TextContext>
                 <Title>{product.title}</Title>
@@ -122,7 +119,7 @@ export default function Products() {
                   ⭐️ {product.rating.rate} ({product.rating.count} reviews)
                 </Rating>
               </TextContext>
-            </ContextShoppingItem>
+            </ProductLinkCard>
           ))}
         </Context>
       </Main>

@@ -5,6 +5,8 @@ import {
   validatePasswordAndGetMessage,
 } from '../utils/regex.ts';
 import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../contexts/UserContext.tsx';
+
 interface LoginUser {
   email: string | undefined;
   password: string | undefined;
@@ -75,6 +77,8 @@ const SignIn: React.FC = () => {
   const { email, password } = inputs;
   const { emailError, passwordError } = errors;
 
+  const { login } = useUserContext();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputs((prevInput) => ({
@@ -97,29 +101,31 @@ const SignIn: React.FC = () => {
     const users: LoginUser[] = JSON.parse(
       localStorage.getItem('users') || '[]',
     );
-    //email과 일치하는 email 속성을 가진 첫 번째 사용자 객체를 찾는 것 요소를 반환 없을 경우 undefined를 반환합니다.
     const user = users.find((user) => user.email === email);
 
-    if (user) {
-      if (user.password === password) {
-        setInputs({
-          email: '',
-          password: '',
-        });
-        setIsLoggedIn(true);
-        localStorage.setItem('currentUser', email ?? '');
-      } else {
-        setErrors({
-          emailError: '',
-          passwordError: '이메일 또는 비밀번호가 일치하지 않습니다.',
-        });
-      }
-    } else {
+    if (!user) {
       setErrors({
         emailError: '',
         passwordError: '존재하지 않는 회원입니다.',
       });
+      return;
     }
+
+    if (user.password !== password) {
+      setErrors({
+        emailError: '',
+        passwordError: '이메일 또는 비밀번호가 일치하지 않습니다.',
+      });
+      return;
+    }
+
+    setInputs({
+      email: '',
+      password: '',
+    });
+    setIsLoggedIn(true);
+    login(user);
+    localStorage.setItem('currentUser', email ?? '');
   };
 
   useEffect(() => {
