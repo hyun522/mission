@@ -1,4 +1,3 @@
-// rm -rf node_modules
 import React, { useState, useEffect } from 'react';
 import supabase from '../../apis/supabaseApi';
 import Modal from '../../components/Modal';
@@ -7,16 +6,6 @@ import classNames from 'classnames/bind';
 import styles from './todolist.module.scss';
 
 const cx = classNames.bind(styles);
-
-//@TODO
-//1. gpt가 짜준 코드 일단 해석후 supabase랑 연동되게 ✅
-//2. css global설정✅ / css작업
-//3. 모달등 추가작업✅
-//새로고침을해도 checkbox 그래로 유지 되도록✅
-//모달창 전체 해석✅
-//4. console.log제거 등 크로스체크
-
-//공부한거 기록
 
 function todolist() {
   const {

@@ -1,10 +1,5 @@
-/* App.css 또는 index.css */
 .modal-overlay {
   position: fixed;
-  //요소는 스크롤을 하더라도 항상 동일한 위치에 머물게 됩니다.
-  //라이브 채팅 버튼을 구현
-  //배치기준 브라우저 전체 화면 (=뷰포트 기준)
-
   top: 0;
   left: 0;
   width: 100%;
