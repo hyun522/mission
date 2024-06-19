@@ -1,0 +1,41 @@
+.bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.todolistContent {
+  width: 600px;
+  height: 100%;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  padding: 20px;
+}
+.addTaskList {
+  width: 100%;
+  display: flex;
+  background-color: pink;
+  margin-top: 20px;
+}
+.addTaskInput {
+  flex: 1;
+  padding: 10px;
+}
+
+.taskListUi {
+  margin-top: 20px;
+}
+
+.taskListLi {
+  margin: 10px 0;
+  display: flex;
+}
+
+.taskListInput {
+  margin-right: 10px;
+}
+
+.taskListSpan {
+  margin-right: 10px;
+  flex: 2;
+}
