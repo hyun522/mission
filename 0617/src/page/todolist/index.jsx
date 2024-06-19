@@ -18,7 +18,7 @@ const cx = classNames.bind(styles);
 
 //공부한거 기록
 
-function index() {
+function todolist() {
   const {
     isOpen: isOpenEditModal,
     openModal: openEditModal,
@@ -42,7 +42,7 @@ function index() {
 
   const fetchTasks = async () => {
     const { data, error } = await supabase
-      .from('index')
+      .from('todolist')
       .select('*')
       .order('id', { ascending: true });
 
@@ -57,7 +57,7 @@ function index() {
     if (newTask.trim() === '') return;
 
     const { data, error } = await supabase
-      .from('index')
+      .from('todolist')
       .insert([{ task: newTask, is_complete: false }])
       .select();
 
@@ -71,7 +71,7 @@ function index() {
 
   const toggleComplete = async (id, isComplete) => {
     const { error } = await supabase
-      .from('index')
+      .from('todolist')
       .update({ is_complete: !isComplete })
       .eq('id', id);
 
@@ -83,7 +83,7 @@ function index() {
   };
 
   const deleteTask = async (id) => {
-    const { error } = await supabase.from('index').delete().eq('id', id);
+    const { error } = await supabase.from('todolist').delete().eq('id', id);
     if (error) {
       console.error('Error deleting task:', error);
     } else {
@@ -108,7 +108,7 @@ function index() {
     if (editingText.trim() === '') return;
 
     const { error } = await supabase
-      .from('index')
+      .from('todolist')
       .update({ task: editingText })
       .eq('id', id);
     if (error) {
@@ -125,40 +125,45 @@ function index() {
   };
 
   return (
-    <div className='App'>
-      <h1>To-Do List</h1>
-      <div>
-        <input
-          type='text'
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          placeholder='항목을 입력하세요.'
-        />
-        <button onClick={addTask}>Add Task</button>
+    <div className={cx('bg')}>
+      <div className={cx('todolistContent')}>
+        <h1>To-Do List</h1>
+        <div className={cx('addTaskList')}>
+          <input
+            type='text'
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            placeholder='항목을 입력하세요.'
+            className={cx('addTaskInput')}
+          />
+          <button onClick={addTask}>Add Task</button>
+        </div>
+        <ul className={cx('taskListUi')}>
+          {tasks.map((task) => (
+            <li key={task.id} className={cx('taskListLi')}>
+              <input
+                type='checkbox'
+                checked={task.is_complete}
+                onClick={() => toggleComplete(task.id, task.is_complete)}
+                className={cx('taskListInput')}
+                readOnly
+              />
+              <span
+                style={{
+                  textDecoration: task.is_complete ? 'line-through' : 'none',
+                }}
+                className={cx('taskListSpan')}
+              >
+                {task.task}
+              </span>
+              <button onClick={() => startEditing(task)}>Edit</button>
+              <button onClick={() => openDeleteModalWithTaskId(task.id)}>
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <input
-              type='checkbox'
-              checked={task.is_complete}
-              onClick={() => toggleComplete(task.id, task.is_complete)}
-              readOnly
-            />
-            <span
-              style={{
-                textDecoration: task.is_complete ? 'line-through' : 'none',
-              }}
-            >
-              {task.task}
-            </span>
-            <button onClick={() => startEditing(task)}>Edit</button>
-            <button onClick={() => openDeleteModalWithTaskId(task.id)}>
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
       {isOpenEditModal && (
         <Modal>
           <h2>Edit Task</h2>
@@ -182,4 +187,4 @@ function index() {
   );
 }
 
-export default index;
+export default todolist;
