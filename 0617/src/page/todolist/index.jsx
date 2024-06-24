@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import supabase from '../../apis/supabaseApi';
 import Modal from '../../components/Modal';
 import useModal from '../../hooks/useModal';
+import TitleAndAddTask from '../../components/Todolist/TitleAndAddTask';
 import classNames from 'classnames/bind';
 import styles from './todolist.module.scss';
 
@@ -39,22 +40,6 @@ function todolist() {
       console.error('Error fetching tasks:', error);
     } else {
       setTasks(data);
-    }
-  };
-
-  const addTask = async () => {
-    if (newTask.trim() === '') return;
-
-    const { data, error } = await supabase
-      .from('todolist')
-      .insert([{ task: newTask, is_complete: false }])
-      .select();
-
-    if (error) {
-      console.error('Error adding task:', error);
-    } else {
-      setTasks([...tasks, ...data]);
-      setNewTask('');
     }
   };
 
@@ -116,17 +101,12 @@ function todolist() {
   return (
     <div className={cx('bg')}>
       <div className={cx('todolistContent')}>
-        <h1>To-Do List</h1>
-        <div className={cx('addTaskList')}>
-          <input
-            type='text'
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            placeholder='항목을 입력하세요.'
-            className={cx('addTaskInput')}
-          />
-          <button onClick={addTask}>Add Task</button>
-        </div>
+        <TitleAndAddTask
+          newTask={newTask}
+          setNewTask={setNewTask}
+          tasks={tasks}
+          setTasks={setTasks}
+        />
         <ul className={cx('taskListUi')}>
           {tasks.map((task) => (
             <li key={task.id} className={cx('taskListLi')}>
