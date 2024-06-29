@@ -7,7 +7,21 @@ import Layout from './components/Layout';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Todolist />,
+    element: <Layout />, // Layout을 라우트의 최상위 요소로 설정
+    children: [
+      {
+        path: '/',
+        element: <Todolist />,
+      },
+      {
+        path: '/signin',
+        element: <SignIn />,
+      },
+      {
+        path: '/signup',
+        element: <SignUp />,
+      },
+    ],
   },
 ]);
 
