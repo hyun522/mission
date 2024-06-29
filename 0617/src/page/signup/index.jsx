@@ -6,13 +6,18 @@ import signImgIcon from '../../assets/sIgnImgIcon.png';
 import checkSquare from '../../assets/checkSquare.png';
 import { IoEyeSharp } from 'react-icons/io5';
 import { FaEyeSlash } from 'react-icons/fa';
-import { validateEmail, validateCheckbox } from '@/utils/validate';
-import { validatePassword } from '@/utils/validatePassword';
+import {
+  getEmailValidationMessage,
+  getCheckboxValidationMessage,
+  isPasswordValid,
+} from '@/utils/validate';
 import styles from './signup.module.scss';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function Index() {
+  const navigate = useNavigate();
   const [isShow, setIsShow] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -46,13 +51,13 @@ function Index() {
     const checkbox = name === 'checkbox' ? newValue : formData.checkbox;
 
     setIsValid({
-      ...validatePassword(password),
+      ...isPasswordValid(password),
     });
 
     setErrorMessage((prevErrorMessage) => ({
       ...prevErrorMessage,
-      email: validateEmail(email),
-      checkbox: validateCheckbox(checkbox),
+      email: getEmailValidationMessage(email),
+      checkbox: getCheckboxValidationMessage(checkbox),
     }));
 
     setHasUserInteracted(true);
@@ -68,43 +73,44 @@ function Index() {
     const { email, password, checkbox } = formData;
 
     setErrorMessage({
-      email: validateEmail(email),
-      checkbox: validateCheckbox(checkbox),
+      email: getEmailValidationMessage(email),
+      checkbox: getCheckboxValidationMessage(checkbox),
     });
 
-    if (
-      !validatePassword(password).length &&
-      !validatePassword(password).false
-    ) {
+    if (!isPasswordValid(password).length && !isPasswordValid(password).false) {
       setHasUserInteracted(true);
     }
 
     if (
-      validateEmail(email) ||
-      validateCheckbox(checkbox) ||
+      getEmailValidationMessage(email) ||
+      getCheckboxValidationMessage(checkbox) ||
       !isValid.length ||
       !isValid.characterTypes
     ) {
       return;
     }
 
-    try {
-      let { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
-    } catch (error) {
-      setErrorMessage({
-        email: '회원가입 중 오류가 발생했습니다.',
-        checkbox: '',
-      });
+    let { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+
+    if (!(data.user?.identities?.length > 0)) {
+      //사용자가 특정 인증 방법으로 이미 등록되어 있는지 확인할 수 있습니다.
+      setErrorMessage((prevData) => ({
+        ...prevData,
+        email: '이미등록된 사용자입니다.',
+      }));
+      return;
     }
+
+    navigate('/');
   };
 
   useEffect(() => {
     if (hasUserInteracted) {
       setIsValid({
-        ...validatePassword(formData.password),
+        ...isPasswordValid(formData.password),
       });
     }
   }, [formData.password, hasUserInteracted]);
