@@ -1,13 +1,20 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+      // '@': path.resolve(__dirname, './src'),
+    },
+  },
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "src/styles/global.module.scss";`, // 전역으로 사용할 SCSS 파일을 추가할 수 있습니다.
+        additionalData: `@import "src/styles/global.module.scss";`,
       },
     },
   },

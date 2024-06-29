@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import supabase from '../../apis/supabaseApi';
-import Modal from '../../components/Modal';
-import useModal from '../../hooks/useModal';
-import TitleAndAddTask from '../../components/Todolist/TitleAndAddTask';
+import supabase from '@/apis/supabaseApi';
+import Modal from '@/components/Modal';
+import useModal from '@/hooks/useModal';
+import TitleAndAddTask from '@/components/Todolist/TitleAndAddTask';
 import classNames from 'classnames/bind';
 import styles from './todolist.module.scss';
 

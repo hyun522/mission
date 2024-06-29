@@ -1,0 +1,23 @@
+@mixin hover-effect {
+  color: #777;
+  transition: all 0.5s;
+}
+
+.header-lists {
+  display: flex;
+  padding: 15px 10px;
+  justify-content: end;
+  border-bottom: 1px solid #ddd;
+  li {
+    margin-left: 10px;
+    &:hover {
+      @include hover-effect;
+    }
+    a {
+      color: #000;
+      &:hover {
+        @include hover-effect;
+      }
+    }
+  }
+}
