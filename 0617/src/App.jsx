@@ -1,8 +1,8 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Todolist from '@/page/todolist/index';
 import SignIn from '@/page/signin';
 import SignUp from '@/page/signup';
 import Layout from './components/Layout';
+import Index from '@/page/index';
 
 const router = createBrowserRouter([
   {
@@ -11,7 +11,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Todolist />,
+        element: <Index />,
       },
       {
         path: '/signin',
