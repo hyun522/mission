@@ -9,17 +9,13 @@ const cx = classNames.bind(styles);
 const index = () => {
   const [user, setUser] = useState(null);
 
-  //컴포넌트가 마운트될떄 실행
-  //사용자 인증 상태 변화를 감지 사용자의 상태를 업데이트
   useEffect(() => {
     const {
-      data: { authListener },
-      //반환하는 객체에서 data 속성의 authListener를 추출합니다.
+      data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session ? session.user : null);
     });
-    // return () => authListener.unsubscribe();
-    // 컴포넌트가 언마운트될 때 실행 되는데 존재하지 않느다..
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleLogout = async () => {
