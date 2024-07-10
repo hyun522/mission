@@ -1,15 +1,32 @@
-// /ul만들기
-// /api 만들어주기
-// /main api 랑 연결
-// 이미지도 삽입할 수 있도록 작업
-// 로그인 전 지금 로그인하고 댓글에 참여해보세요!
-
+import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './comment.module.scss';
 
 const cx = classNames.bind(styles);
 
 function index() {
+  const textareaRef = useRef(null);
+  const [text, setText] = useState('');
+
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      const minHeight = 50;
+      textareaRef.current.style.height = 'auto';
+      const scrollHeight = textareaRef.current.scrollHeight;
+      if (scrollHeight >= minHeight) {
+        textareaRef.current.style.height = `${scrollHeight + 4}px`;
+      }
+    }
+  };
+
+  const handleInput = (event) => {
+    const { value } = event.target;
+    if (value.length <= 3000) {
+      setText(value);
+      adjustTextareaHeight();
+    }
+  };
+
   return (
     <>
       <div className={cx('commentSection')}>
@@ -27,11 +44,14 @@ function index() {
         <article className={cx('commentBox')}>
           <div>
             <p className={cx('userInfo')}>유저정보</p>
-            <p className={cx('charCount')}> 1/3000</p>
+            <p className={cx('charCount')}>{`${text.length}/3000`}</p>
           </div>
           <textarea
+            ref={textareaRef}
             className={cx('commentInput')}
             placeholder='댓글을 남겨보세요'
+            value={text}
+            onInput={handleInput}
           />
           <button className={cx('submitButton')}>등록</button>
         </article>
