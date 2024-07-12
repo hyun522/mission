@@ -1,80 +1,80 @@
-.commentSection {
-  max-width: 1050px;
-  width: 100%;
-  margin: 0 auto;
-  padding-top: 80px;
-  font-family: Arial, sans-serif;
-}
-
-.commentCount {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.commentList {
-  padding: 10px;
-}
-
-// .userInfo {
-//   li {}
+// .commentSection {
+//   max-width: 1050px;
+//   width: 100%;
+//   margin: 0 auto;
+//   padding-top: 80px;
+//   font-family: Arial, sans-serif;
 // }
 
-.commentSection {
-  max-width: 1050px;
-  width: 100%;
-}
+// .commentCount {
+//   font-weight: bold;
+//   margin-bottom: 10px;
+// }
 
-.loginPrompt {
-  font-size: 14px;
-  color: #d0d0d0;
-  padding: 15px;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  cursor: pointer;
-}
+// .commentList {
+//   padding: 10px;
+// }
 
-.commentBox {
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 10px;
-  div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-}
+// // .userInfo {
+// //   li {}
+// // }
 
-.charCount {
-  color: #888;
-  font-size: 14px;
-}
+// .commentSection {
+//   max-width: 1050px;
+//   width: 100%;
+// }
 
-//크기조절 텍스트 입력값에따라 늘어나도록
-.commentInput {
-  width: 100%;
-  border: none;
-  padding: 10px 10px 10px 0;
-  margin-bottom: 10px;
-  resize: none;
-  //focus none 안됨
-  &:focus {
-    outline: none;
-  }
-}
-.submitButton {
-  background-color: #5f0080;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  align-self: flex-end;
-  cursor: pointer;
-}
+// .loginPrompt {
+//   font-size: 14px;
+//   color: #d0d0d0;
+//   padding: 15px;
+//   border: 2px solid #e0e0e0;
+//   border-radius: 6px;
+//   margin-bottom: 20px;
+//   cursor: pointer;
+// }
 
-.submitButton:hover {
-  background-color: #4a006a;
-}
+// .commentBox {
+//   display: flex;
+//   flex-direction: column;
+//   border: 2px solid #e0e0e0;
+//   border-radius: 6px;
+//   padding: 10px;
+//   div {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     margin-bottom: 10px;
+//   }
+// }
+
+// .charCount {
+//   color: #888;
+//   font-size: 14px;
+// }
+
+// //크기조절 텍스트 입력값에따라 늘어나도록
+// .commentInput {
+//   width: 100%;
+//   border: none;
+//   padding: 10px 10px 10px 0;
+//   margin-bottom: 10px;
+//   resize: none;
+//   //focus none 안됨
+//   &:focus {
+//     outline: none;
+//   }
+// }
+// .submitButton {
+//   background-color: #5f0080;
+//   color: white;
+//   border: none;
+//   border-radius: 4px;
+//   padding: 10px 20px;
+//   align-self: flex-end;
+//   cursor: pointer;
+// }
+
+// .submitButton:hover {
+//   background-color: #4a006a;
+// }
