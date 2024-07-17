@@ -3,9 +3,13 @@ import { useParams } from 'react-router-dom';
 import supabase from '@/apis/supabaseApi';
 import classNames from 'classnames/bind';
 import styles from './index.module.scss';
-// import Comment from '@/components/Comment/index';
 
 const cx = classNames.bind(styles);
+
+//@TODO
+//1. 댓글 UI 만들기 ✅
+//2. main과 댓글겟수 연동 되도록
+//3. 로그인시 접근할수 있도록
 
 function index() {
   const { productId } = useParams();
@@ -35,18 +39,26 @@ function index() {
   const fetchComments = async () => {
     const { data, error } = await supabase
       .from('comments')
-      .select()
+      .select('*')
       .eq('product_id', productId);
-    console.log(data);
 
     if (error) {
       console.error('Error fetching comments:', error);
     } else {
-      setNewComment(data);
+      setCommentList(data);
     }
   };
 
-  const adjustTextareaHeight = () => {
+  const handleInput = (event) => {
+    const { value } = event.target;
+    console.log({ value });
+    if (value.length <= 3000) {
+      setNewComment(value);
+      adjustTextareaHeight();
+    }
+  };
+
+  const adjustTextareaHeightㅗ = () => {
     if (textareaRef.current) {
       const minHeight = 50;
       textareaRef.current.style.height = 'auto';
@@ -57,37 +69,18 @@ function index() {
     }
   };
 
-  const handleInput = (event) => {
-    const { value } = event.target;
-    if (value.length <= 3000) {
-      setNewComment(value);
-      adjustTextareaHeight();
-    }
-  };
-
-  // useEffect(() => {
-  //   adjustTextareaHeight();
-  // }, []);
-
-  useEffect(() => {
-    // 컴포넌트가 마운트될 때 textarea 값을 초기화
-    setNewComment('');
-  }, []);
-
   const handleSubmit = async () => {
     if (newComment.trim() === '') {
       alert('내용을 입력해주세요.');
       return;
     }
-    // data: 삽입이 성공적으로 완료되었을 때 반환되는 데이터입니다.
     const { data, error } = await supabase
       .from('comments')
       .insert([{ product_id: productId, comment_text: newComment }])
       .select();
-    // 데이터를 삽입한 후 해당 삽입된 데이터를 다시 선택하여 반환합니다.
-    console.log(data);
+
     if (error) {
-      console.error('Error adding comment', error);
+      return;
     } else {
       setCommentList([...commentList, ...data]);
       setNewComment('');
@@ -112,13 +105,17 @@ function index() {
             </article>
           </section>
           <div className={cx('commentSection')}>
-            <p className={cx('commentCount')}>💬 댓글 0</p>
+            <p className={cx('commentCount')}>💬 댓글 {commentList.length}</p>
             <section className={cx('commentList')}>
               <ul className={cx('userInfo')}>
                 {commentList.map((el) => (
                   <li key={el.id}>
-                    <p>{el.comment_text}</p>
-                    <p>{new Date(el.created_at).toLocaleString()}</p>
+                    {/* <p className={cx('username')}>{el.username}</p> */}
+                    <p className={cx('username')}>jhj1004v</p>
+                    <p className={cx('commentText')}>{el.comment_text}</p>
+                    <p className={cx('commentCreateAt')}>
+                      {new Date(el.created_at).toLocaleString()}
+                    </p>
                   </li>
                 ))}
               </ul>
