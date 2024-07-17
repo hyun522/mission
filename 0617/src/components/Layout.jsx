@@ -9,9 +9,7 @@ const Layout = () => {
   return (
     <div>
       {shouldShowHeader && <Header />}
-      <main>
-        <Outlet />
-      </main>
+      <Outlet />
     </div>
   );
 };
