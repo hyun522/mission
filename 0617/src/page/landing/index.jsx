@@ -19,7 +19,7 @@ function index() {
       .select('*')
       .order('id', { ascending: true });
     if (error) {
-      console.error('Error fetching tasks:', error);
+      return;
     } else {
       setLists(data);
     }
@@ -42,7 +42,7 @@ function index() {
               <h3 className={cx('productTitle')}>{product.title}</h3>
               <p className={cx('productPrice')}>{product.price}</p>
               <p className={cx('productTotalComments')}>
-                💬 {product.comments}
+                💬 {product.comment_count}
               </p>
             </Link>
           </article>
