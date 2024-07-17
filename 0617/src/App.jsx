@@ -1,9 +1,8 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import Todolist from '@/page/todolist/index';
 import SignIn from '@/page/signin';
 import SignUp from '@/page/signup';
 import Layout from './components/Layout';
-import Landing from '@/page/landing/index';
-import Detail from '@/page/detail/index';
 
 const router = createBrowserRouter([
   {
@@ -12,11 +11,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Landing />,
-      },
-      {
-        path: '/detail/:productId',
-        element: <Detail />,
+        element: <Todolist />,
       },
       {
         path: '/signin',

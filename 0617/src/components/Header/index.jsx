@@ -25,9 +25,6 @@ const index = () => {
   return (
     <header>
       <nav>
-        <Link to='/' className={cx('logo')}>
-          HyunKurly
-        </Link>
         <ul className={cx('header-lists')}>
           {user ? (
             <>
