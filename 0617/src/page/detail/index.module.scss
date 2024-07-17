@@ -73,15 +73,39 @@
 .commentCount {
   font-weight: bold;
   margin-bottom: 10px;
+  padding-bottom: 15px;
+  border-bottom: 1.5px solid #000;
 }
 
 .commentList {
   padding: 10px;
 }
 
-// .userInfo {
-//   li {}
-// }
+.userInfo {
+  li {
+    margin: 20px 0;
+    font-size: 14px;
+  }
+}
+
+.username {
+  font-weight: 600;
+  line-height: 19px;
+  color: #333;
+}
+
+.commentText {
+  font-weight: 400;
+  font-size: 14px;
+  color: #333;
+  margin: 10px 0;
+}
+
+.commentCreateAt {
+  font-weight: 400;
+  line-height: 19px;
+  color: #999;
+}
 
 .commentSection {
   max-width: 1050px;
@@ -117,14 +141,12 @@
   font-size: 14px;
 }
 
-//크기조절 텍스트 입력값에따라 늘어나도록
 .commentInput {
   width: 100%;
   border: none;
   padding: 10px 10px 10px 0;
   margin-bottom: 10px;
   resize: none;
-  //focus none 안됨
   &:focus {
     outline: none;
   }
