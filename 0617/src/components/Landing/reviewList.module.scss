@@ -1,0 +1,78 @@
+//댓글
+.reviewListSection {
+  max-width: 1050px;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 80px;
+  font-family: Arial, sans-serif;
+}
+
+.reviewCount {
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding-bottom: 15px;
+  border-bottom: 1.5px solid #000;
+}
+
+.reviewList {
+  padding: 10px;
+}
+
+.userInfo {
+  li {
+    margin: 20px 0;
+    font-size: 14px;
+  }
+}
+
+.reviewListContainer {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #ddd;
+}
+
+.username {
+  font-weight: 600;
+  line-height: 19px;
+  color: #333;
+}
+
+.reviewBody {
+  flex: 1;
+  padding-left: 50px;
+}
+
+.reviewText {
+  font-weight: 400;
+  font-size: 14px;
+  color: #333;
+}
+
+.reviewImgBox {
+  display: block;
+  max-width: 250px;
+  width: 100%;
+  height: auto;
+  margin-top: 20px;
+}
+
+.reviewImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.reviewCreateAt {
+  margin-top: 20px;
+  font-weight: 400;
+  line-height: 19px;
+  color: #999;
+}
+
+.reviewSection {
+  max-width: 1050px;
+  width: 100%;
+}
