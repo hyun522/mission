@@ -2,10 +2,12 @@
   color: #777;
   transition: all 0.5s;
 }
+
 header {
   border-bottom: 1px solid #ddd;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* 음영 추가 */
 }
+
 nav {
   display: flex;
   justify-content: space-between;
@@ -15,16 +17,19 @@ nav {
   margin: 0 auto;
   padding: 15px 0;
 }
+
 .logo {
   font-size: 20px;
   font-weight: 500;
   color: #5e0080;
+  cursor: pointer;
 }
 
 .header-lists {
   display: flex;
   li {
     margin-left: 10px;
+    cursor: pointer;
     &:hover {
       @include hover-effect;
     }
@@ -33,6 +38,13 @@ nav {
       &:hover {
         @include hover-effect;
       }
+    }
+  }
+  .noCursor {
+    cursor: default;
+    &:hover {
+      color: #000;
+      transition: none;
     }
   }
 }
