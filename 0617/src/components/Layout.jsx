@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import Header from '@/components/Header/';
+import Header from '@/components/common/Header';
 
 const Layout = () => {
   const location = useLocation();
@@ -9,9 +9,7 @@ const Layout = () => {
   return (
     <div>
       {shouldShowHeader && <Header />}
-      <main>
-        <Outlet />
-      </main>
+      <Outlet />
     </div>
   );
 };
