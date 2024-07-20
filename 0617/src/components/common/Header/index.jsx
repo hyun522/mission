@@ -3,20 +3,22 @@ import { Link } from 'react-router-dom';
 import styles from './header.module.scss';
 import classNames from 'classnames/bind';
 import supabase from '@/apis/supabaseApi';
+import { useAuth } from '@/context/AuthContext';
 
 const cx = classNames.bind(styles);
 
 const index = () => {
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
+  // const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session ? session.user : null);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
+  // useEffect(() => {
+  //   const {
+  //     data: { subscription },
+  //   } = supabase.auth.onAuthStateChange((_event, session) => {
+  //     setUser(session ? session.user : null);
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
