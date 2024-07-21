@@ -19,6 +19,7 @@ function index() {
   const [reviewList, setReviewList] = useState([]);
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [uploadImg, setUploading] = useState(false);
 
   useEffect(() => {
     fetchProductDetail();
@@ -79,7 +80,7 @@ function index() {
   const handleUploadAndSubmit = async () => {
     try {
       setUploading(true);
-      setMessage('');
+      // setMessage('');
 
       let imageUrl = null;
 
@@ -109,7 +110,6 @@ function index() {
           .getPublicUrl(filePath);
 
         imageUrl = publicUrl.data.publicUrl;
-        setMessage('Image uploaded successfully');
         setPreviewUrl(null);
         setFile(null);
       }
