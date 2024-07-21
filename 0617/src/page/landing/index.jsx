@@ -41,7 +41,7 @@ function index() {
               <h3 className={cx('productTitle')}>{product.title}</h3>
               <p className={cx('productPrice')}>{product.price}</p>
               <p className={cx('productTotalComments')}>
-                💬 {product.comment_count}
+                💬 {product.review_count}
               </p>
             </Link>
           </article>
