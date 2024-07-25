@@ -1,26 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import { Link, useParams } from 'react-router-dom';
 import supabase from '@/apis/supabaseApi';
+import ReviewForm from '@/components/Landing/ReviewForm';
+import ReviewList from '@/components/Landing/ReviewList';
 import classNames from 'classnames/bind';
-import styles from './index.module.scss';
+import styles from './detail.module.scss';
 
 const cx = classNames.bind(styles);
 
-//@TODO
-//1. 댓글 UI 만들기 ✅
-//2. main과 댓글겟수 연동 되도록
-//3. 로그인시 접근할수 있도록
-
 function index() {
   const { productId } = useParams();
-  const [productDetail, setProductDetail] = useState(null);
-  const [newComment, setNewComment] = useState('');
-  const [commentList, setCommentList] = useState([]);
+  const { user } = useAuth();
   const textareaRef = useRef(null);
+
+  const [productDetail, setProductDetail] = useState(null);
+  const [newReview, setNewReview] = useState('');
+  const [reviewList, setReviewList] = useState([]);
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [uploadImg, setUploading] = useState(false);
 
   useEffect(() => {
     fetchProductDetail();
-    fetchComments();
+    fetchReviews();
   }, [productId]);
 
   const fetchProductDetail = async () => {
@@ -30,35 +33,34 @@ function index() {
       .eq('id', productId)
       .single();
     if (error) {
-      console.error('Error fetching tasks:', error);
+      return;
     } else {
       setProductDetail(data);
     }
   };
 
-  const fetchComments = async () => {
+  const fetchReviews = async () => {
     const { data, error } = await supabase
-      .from('comments')
+      .from('reviews')
       .select('*')
       .eq('product_id', productId);
 
     if (error) {
-      console.error('Error fetching comments:', error);
+      return;
     } else {
-      setCommentList(data);
+      setReviewList(data);
     }
   };
 
   const handleInput = (event) => {
     const { value } = event.target;
-    console.log({ value });
     if (value.length <= 3000) {
-      setNewComment(value);
+      setNewReview(value);
       adjustTextareaHeight();
     }
   };
 
-  const adjustTextareaHeightㅗ = () => {
+  const adjustTextareaHeight = () => {
     if (textareaRef.current) {
       const minHeight = 50;
       textareaRef.current.style.height = 'auto';
@@ -69,22 +71,77 @@ function index() {
     }
   };
 
-  const handleSubmit = async () => {
-    if (newComment.trim() === '') {
-      alert('내용을 입력해주세요.');
-      return;
-    }
-    const { data, error } = await supabase
-      .from('comments')
-      .insert([{ product_id: productId, comment_text: newComment }])
-      .select();
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+    setPreviewUrl(URL.createObjectURL(selectedFile));
+  };
 
-    if (error) {
-      return;
-    } else {
-      setCommentList([...commentList, ...data]);
-      setNewComment('');
+  const handleUploadAndSubmit = async () => {
+    try {
+      setUploading(true);
+      // setMessage('');
+
+      let imageUrl = null;
+
+      if (newReview.trim() === '') {
+        alert('내용을 입력해주세요.');
+        return;
+      }
+
+      if (file) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `public/${fileName}`;
+
+        let { error: uploadError } = await supabase.storage
+          .from('images')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const publicUrl = supabase.storage
+          .from('images')
+          .getPublicUrl(filePath);
+
+        imageUrl = publicUrl.data.publicUrl;
+        setPreviewUrl(null);
+        setFile(null);
+      }
+
+      const { data, error } = await supabase
+        .from('reviews')
+        .insert([
+          {
+            product_id: productId,
+            username: user.email,
+            review_text: newReview,
+            review_img: imageUrl,
+          },
+        ])
+        .select();
+
+      if (error) {
+        return;
+      } else {
+        setReviewList([...reviewList, ...data]);
+        setNewReview('');
+      }
+    } catch (error) {
+      alert('Error uploading image and submitting review!');
+    } finally {
+      setUploading(false);
     }
+  };
+
+  const handleCancelSelection = () => {
+    setPreviewUrl(null);
+    setFile(null);
   };
 
   return (
@@ -104,43 +161,26 @@ function index() {
               </div>
             </article>
           </section>
-          <div className={cx('commentSection')}>
-            <p className={cx('commentCount')}>💬 댓글 {commentList.length}</p>
-            <section className={cx('commentList')}>
-              <ul className={cx('userInfo')}>
-                {commentList.map((el) => (
-                  <li key={el.id}>
-                    {/* <p className={cx('username')}>{el.username}</p> */}
-                    <p className={cx('username')}>jhj1004v</p>
-                    <p className={cx('commentText')}>{el.comment_text}</p>
-                    <p className={cx('commentCreateAt')}>
-                      {new Date(el.created_at).toLocaleString()}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          </div>
-          <div className={cx('commentSection')}>
-            <div className={cx('loginPrompt')}>
-              지금 로그인하고 댓글에 참여해보세요! ＞{' '}
-            </div>
-            <article className={cx('commentBox')}>
-              <div>
-                <p className={cx('userInfo')}>유저정보</p>
-                <p className={cx('charCount')}>{`${newComment.length}/3000`}</p>
-              </div>
-              <textarea
-                ref={textareaRef}
-                className={cx('commentInput')}
-                placeholder='댓글을 남겨보세요'
-                value={newComment}
-                onInput={handleInput}
+          <ReviewList reviewList={reviewList} />
+          <div className={cx('reviewFormSection')}>
+            {user ? (
+              <ReviewForm
+                user={user}
+                newReview={newReview}
+                handleInput={handleInput}
+                handleUploadAndSubmit={handleUploadAndSubmit}
+                textareaRef={textareaRef}
+                previewUrl={previewUrl}
+                handleCancelSelection={handleCancelSelection}
+                handleFileChange={handleFileChange}
               />
-              <button onClick={handleSubmit} className={cx('submitButton')}>
-                등록
-              </button>
-            </article>
+            ) : (
+              <div className={cx('loginPrompt')}>
+                <Link to='/signin'>
+                  지금 로그인하고 댓글에 참여해보세요! ＞
+                </Link>
+              </div>
+            )}
           </div>
         </>
       ) : (

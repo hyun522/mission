@@ -2,8 +2,9 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import SignIn from '@/page/signin';
 import SignUp from '@/page/signup';
 import Layout from './components/Layout';
-import Landing from '@/page/landing/index';
+import Landing from '@/page/landing/index';
 import Detail from '@/page/detail/index';
+import AuthProvider from '@/context/AuthContext';
 
 const router = createBrowserRouter([
   {
@@ -31,7 +32,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
 export default App;

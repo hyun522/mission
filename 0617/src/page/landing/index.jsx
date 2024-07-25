@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import supabase from '@/apis/supabaseApi';
 import classNames from 'classnames/bind';
 import styles from './landing.module.scss';
-import supabase from '@/apis/supabaseApi';
-import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -25,7 +25,6 @@ function index() {
     }
   };
 
-  //초기렌더링 시점에 빈배열로 형성되는것 해결 위함
   if (!lists) {
     return <p>Loading</p>;
   }
@@ -42,7 +41,7 @@ function index() {
               <h3 className={cx('productTitle')}>{product.title}</h3>
               <p className={cx('productPrice')}>{product.price}</p>
               <p className={cx('productTotalComments')}>
-                💬 {product.comment_count}
+                💬 {product.review_count}
               </p>
             </Link>
           </article>

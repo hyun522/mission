@@ -61,55 +61,12 @@
   }
 }
 
-//댓글
-.commentSection {
+.reviewFormSection {
   max-width: 1050px;
   width: 100%;
   margin: 0 auto;
   padding-top: 80px;
   font-family: Arial, sans-serif;
-}
-
-.commentCount {
-  font-weight: bold;
-  margin-bottom: 10px;
-  padding-bottom: 15px;
-  border-bottom: 1.5px solid #000;
-}
-
-.commentList {
-  padding: 10px;
-}
-
-.userInfo {
-  li {
-    margin: 20px 0;
-    font-size: 14px;
-  }
-}
-
-.username {
-  font-weight: 600;
-  line-height: 19px;
-  color: #333;
-}
-
-.commentText {
-  font-weight: 400;
-  font-size: 14px;
-  color: #333;
-  margin: 10px 0;
-}
-
-.commentCreateAt {
-  font-weight: 400;
-  line-height: 19px;
-  color: #999;
-}
-
-.commentSection {
-  max-width: 1050px;
-  width: 100%;
 }
 
 .loginPrompt {
@@ -119,48 +76,7 @@
   border: 2px solid #e0e0e0;
   border-radius: 6px;
   margin-bottom: 20px;
-  cursor: pointer;
-}
-
-.commentBox {
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 10px;
-  div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+  a {
+    cursor: pointer;
   }
-}
-
-.charCount {
-  color: #888;
-  font-size: 14px;
-}
-
-.commentInput {
-  width: 100%;
-  border: none;
-  padding: 10px 10px 10px 0;
-  margin-bottom: 10px;
-  resize: none;
-  &:focus {
-    outline: none;
-  }
-}
-.submitButton {
-  background-color: #5f0080;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  align-self: flex-end;
-  cursor: pointer;
-}
-
-.submitButton:hover {
-  background-color: #4a006a;
 }
