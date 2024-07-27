@@ -41,7 +41,6 @@ function index() {
   const textareaRef = useRef(null);
 
   const [productDetail, setProductDetail] = useState(null);
-  const [newReview, setNewReview] = useState('');
   const [reviewList, setReviewList] = useState([]);
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -55,7 +54,6 @@ function index() {
   const handleInput = (event) => {
     const { value } = event.target;
     if (value.length <= 3000) {
-      setNewReview(value);
       adjustTextareaHeight();
     }
   };
@@ -81,9 +79,9 @@ function index() {
     try {
       setUploading(true);
       let imageUrl = null;
-
-      if (newReview.trim() === '') {
+      if (textareaRef.current.value === '') {
         alert('내용을 입력해주세요.');
+        setUploading(false);
         return;
       }
 
@@ -118,7 +116,7 @@ function index() {
           {
             product_id: productId,
             username: user.email,
-            review_text: newReview,
+            review_text: textareaRef.current.value.trim(),
             review_img: imageUrl,
           },
         ])
@@ -128,7 +126,7 @@ function index() {
         return;
       } else {
         setReviewList([...reviewList, ...data]);
-        setNewReview('');
+        textareaRef.current.value = '';
       }
     } catch (error) {
       alert('Error uploading image and submitting review!');
@@ -164,7 +162,6 @@ function index() {
             {user ? (
               <ReviewForm
                 user={user}
-                newReview={newReview}
                 handleInput={handleInput}
                 handleUploadAndSubmit={handleUploadAndSubmit}
                 textareaRef={textareaRef}
