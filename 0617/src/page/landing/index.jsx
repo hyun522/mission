@@ -6,28 +6,24 @@ import styles from './landing.module.scss';
 
 const cx = classNames.bind(styles);
 
+const fetchProducts = async (setLists) => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .order('id', { ascending: true });
+  if (error) {
+    return;
+  } else {
+    setLists(data);
+  }
+};
+
 function index() {
   const [lists, setLists] = useState([]);
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(setLists);
   }, []);
-
-  const fetchProducts = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('id', { ascending: true });
-    if (error) {
-      return;
-    } else {
-      setLists(data);
-    }
-  };
-
-  if (!lists) {
-    return <p>Loading</p>;
-  }
 
   return (
     <main>

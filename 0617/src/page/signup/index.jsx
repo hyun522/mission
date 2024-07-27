@@ -45,20 +45,18 @@ function Index() {
       [name]: newValue,
     }));
 
-    //즉각적으로 코드의 수정 사항을 반영하겠다. 변동이있으면 변동값을 넣고 그렇지 않으면 과거의 값을 넣겠다.
-    const email = name === 'email' ? newValue : formData.email;
-    const password = name === 'password' ? newValue : formData.password;
-    const checkbox = name === 'checkbox' ? newValue : formData.checkbox;
-
     setIsValid({
       ...isPasswordValid(password),
     });
 
-    setErrorMessage((prevErrorMessage) => ({
-      ...prevErrorMessage,
-      email: getEmailValidationMessage(email),
-      checkbox: getCheckboxValidationMessage(checkbox),
-    }));
+    setErrorMessage((prevErrorMessage) => {
+      const newFormData = { ...formData, [name]: value };
+      return {
+        ...prevErrorMessage,
+        email: getEmailValidationMessage(newFormData.email),
+        checkbox: getCheckboxValidationMessage(newFormData.checkbox),
+      };
+    });
 
     setHasUserInteracted(true);
   };

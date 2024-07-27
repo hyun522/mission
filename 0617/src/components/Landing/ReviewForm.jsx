@@ -7,7 +7,6 @@ const cx = classNames.bind(styles);
 
 function ReviewForm({
   user,
-  newReview,
   handleInput,
   handleUploadAndSubmit,
   textareaRef,
@@ -19,13 +18,16 @@ function ReviewForm({
     <article className={cx('reviewBox')}>
       <div className={cx('reviewHeader')}>
         <p className={cx('userInfo')}>{user.email}</p>
-        <p className={cx('charCount')}>{`${newReview.length}/3000`}</p>
+        <p className={cx('charCount')}>
+          {textareaRef.current
+            ? `${textareaRef.current.value.length}/3000`
+            : '0/3000'}
+        </p>
       </div>
       <textarea
         ref={textareaRef}
         className={cx('reviewInput')}
         placeholder='댓글을 남겨보세요'
-        value={newReview}
         onInput={handleInput}
       />
       {previewUrl && (
