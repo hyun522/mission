@@ -9,53 +9,51 @@ import styles from './detail.module.scss';
 
 const cx = classNames.bind(styles);
 
+const fetchProductDetail = async (setProductDetail, productId) => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', productId)
+    .single();
+  if (error) {
+    return;
+  } else {
+    setProductDetail(data);
+  }
+};
+
+const fetchReviews = async (setReviewList, productId) => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('product_id', productId);
+
+  if (error) {
+    return;
+  } else {
+    setReviewList(data);
+  }
+};
+
 function index() {
   const { productId } = useParams();
   const { user } = useAuth();
   const textareaRef = useRef(null);
 
   const [productDetail, setProductDetail] = useState(null);
-  const [newReview, setNewReview] = useState('');
   const [reviewList, setReviewList] = useState([]);
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [uploadImg, setUploading] = useState(false);
 
   useEffect(() => {
-    fetchProductDetail();
-    fetchReviews();
+    fetchProductDetail(setProductDetail, productId);
+    fetchReviews(setReviewList, productId);
   }, [productId]);
-
-  const fetchProductDetail = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', productId)
-      .single();
-    if (error) {
-      return;
-    } else {
-      setProductDetail(data);
-    }
-  };
-
-  const fetchReviews = async () => {
-    const { data, error } = await supabase
-      .from('reviews')
-      .select('*')
-      .eq('product_id', productId);
-
-    if (error) {
-      return;
-    } else {
-      setReviewList(data);
-    }
-  };
 
   const handleInput = (event) => {
     const { value } = event.target;
     if (value.length <= 3000) {
-      setNewReview(value);
       adjustTextareaHeight();
     }
   };
@@ -80,12 +78,10 @@ function index() {
   const handleUploadAndSubmit = async () => {
     try {
       setUploading(true);
-      // setMessage('');
-
       let imageUrl = null;
-
-      if (newReview.trim() === '') {
+      if (textareaRef.current.value === '') {
         alert('내용을 입력해주세요.');
+        setUploading(false);
         return;
       }
 
@@ -120,7 +116,7 @@ function index() {
           {
             product_id: productId,
             username: user.email,
-            review_text: newReview,
+            review_text: textareaRef.current.value.trim(),
             review_img: imageUrl,
           },
         ])
@@ -130,7 +126,7 @@ function index() {
         return;
       } else {
         setReviewList([...reviewList, ...data]);
-        setNewReview('');
+        textareaRef.current.value = '';
       }
     } catch (error) {
       alert('Error uploading image and submitting review!');
@@ -166,7 +162,6 @@ function index() {
             {user ? (
               <ReviewForm
                 user={user}
-                newReview={newReview}
                 handleInput={handleInput}
                 handleUploadAndSubmit={handleUploadAndSubmit}
                 textareaRef={textareaRef}

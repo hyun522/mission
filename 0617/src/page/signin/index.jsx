@@ -33,14 +33,14 @@ function Index() {
       [name]: value,
     }));
 
-    const email = name === 'email' ? value : formData.email;
-    const password = name === 'password' ? value : formData.password;
-
-    setErrorMessage((prevErrorMessage) => ({
-      ...prevErrorMessage,
-      email: getEmailValidationMessage(email),
-      password: getPasswordValidationMessage(password),
-    }));
+    setErrorMessage((prevErrorMessage) => {
+      const newFormData = { ...formData, [name]: value };
+      return {
+        ...prevErrorMessage,
+        email: getEmailValidationMessage(newFormData.email),
+        password: getPasswordValidationMessage(newFormData.password),
+      };
+    });
   };
 
   const toggleShowPassword = () => {
@@ -72,12 +72,8 @@ function Index() {
     let errorMessage = '';
 
     if (error) {
-      if (error.message === 'Invalid login credentials') {
-        errorMessage = '유저가 존재하지 않습니다';
-      } else {
-        errorMessage =
-          '이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.';
-      }
+      errorMessage =
+        '이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.';
 
       setErrorMessage({
         email: '',
