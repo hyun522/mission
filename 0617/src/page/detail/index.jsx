@@ -9,7 +9,7 @@ import styles from './detail.module.scss';
 
 const cx = classNames.bind(styles);
 
-const fetchProductDetail = async (setProductDetail, productId) => {
+const fetchProductDetail = async (productId) => {
   const { data, error } = await supabase
     .from('products')
     .select('*')
@@ -18,11 +18,11 @@ const fetchProductDetail = async (setProductDetail, productId) => {
   if (error) {
     return;
   } else {
-    setProductDetail(data);
+    return data;
   }
 };
 
-const fetchReviews = async (setReviewList, productId) => {
+const fetchReviews = async (productId) => {
   const { data, error } = await supabase
     .from('reviews')
     .select('*')
@@ -31,7 +31,7 @@ const fetchReviews = async (setReviewList, productId) => {
   if (error) {
     return;
   } else {
-    setReviewList(data);
+    return data;
   }
 };
 
@@ -47,8 +47,29 @@ function index() {
   const [uploadImg, setUploading] = useState(false);
 
   useEffect(() => {
-    fetchProductDetail(setProductDetail, productId);
-    fetchReviews(setReviewList, productId);
+    const loadProductDetail = async () => {
+      try {
+        const data = await fetchProductDetail(productId);
+        setProductDetail(data);
+      } catch (err) {
+        return;
+      }
+    };
+
+    loadProductDetail();
+  }, [productId]);
+
+  useEffect(() => {
+    const loadProductDetail = async () => {
+      try {
+        const data = await fetchReviews(productId);
+        setReviewList(data);
+      } catch (err) {
+        return;
+      }
+    };
+
+    loadProductDetail();
   }, [productId]);
 
   const handleInput = (event) => {
