@@ -2,6 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './reviewForm.module.scss';
 import { MdOutlineCameraAlt } from 'react-icons/md';
 import { FaTimes } from 'react-icons/fa';
+import Spinner from '@/components/common/Spinner/index';
 
 const cx = classNames.bind(styles);
 
@@ -13,7 +14,9 @@ function ReviewForm({
   previewUrl,
   handleFileChange,
   handleCancelSelection,
+  uploadImg,
 }) {
+  console.log(uploadImg);
   return (
     <article className={cx('reviewBox')}>
       <div className={cx('reviewHeader')}>
@@ -48,10 +51,11 @@ function ReviewForm({
             id='fileInput'
             onChange={handleFileChange}
             className={cx('fileInput')}
+            disabled={uploadImg}
           />
         </div>
         <button onClick={handleUploadAndSubmit} className={cx('submitButton')}>
-          등록
+          {uploadImg ? <Spinner /> : '등록'}
         </button>
       </div>
     </article>

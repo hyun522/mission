@@ -168,6 +168,7 @@ function index() {
                 previewUrl={previewUrl}
                 handleCancelSelection={handleCancelSelection}
                 handleFileChange={handleFileChange}
+                uploadImg={uploadImg}
               />
             ) : (
               <div className={cx('loginPrompt')}>
