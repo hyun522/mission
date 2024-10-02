@@ -2,6 +2,14 @@
 # 📋 프로젝트 목적 
 평소 자주 이용하는 마켓컬리 사이트의 주요 기능들을 supabase를 접목해서 구현해보고 에러를 벨로그에 기록해보며 에러 해결능력을 확장시키기 
 
+
+
+https://github.com/user-attachments/assets/7cfcec9e-d3ea-4ed4-a301-da7971e778fe
+
+
+
+
+
 <br />
 
 # 🛠️ 기술 스택
