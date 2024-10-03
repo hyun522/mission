@@ -52,6 +52,7 @@ form {
 }
 
 .input-common {
+  width: 100%;
   margin-top: 4px;
   padding: 15px 10px;
   font-size: 18px;
@@ -88,11 +89,12 @@ form {
 }
 
 .button {
-  border: none;
-  border-radius: 10px;
   background: #916bbf;
+  border: none;
+  width: 100%;
+  border-radius: 10px;
   margin-top: 41px;
-  padding: 21px 183px;
+  padding: 21px 0;
   font-size: 24px;
   font-weight: 600;
   color: #fff;
