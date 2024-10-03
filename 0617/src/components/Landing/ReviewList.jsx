@@ -1,9 +1,44 @@
 import classNames from 'classnames/bind';
 import styles from './reviewList.module.scss';
+import { useEffect } from 'react';
+import supabase from '@/apis/supabaseApi';
 
 const cx = classNames.bind(styles);
 
-function ReviewList({ reviewList }) {
+const fetchReviews = async (productId) => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('product_id', productId);
+
+  if (error) {
+    return;
+  } else {
+    console.log(data);
+    return data;
+  }
+};
+
+function ReviewList({ productId, reviewList, setReviewList }) {
+  // const [reviewList, setReviewList] = useState([]);
+  console.log(productId);
+  console.log(reviewList);
+
+  useEffect(() => {
+    const loadReviewList = async () => {
+      try {
+        const data = await fetchReviews(productId);
+        console.log(data);
+        setReviewList(data);
+      } catch (err) {
+        return;
+      }
+    };
+    console.log(reviewList);
+
+    loadReviewList();
+  }, [productId]);
+
   return (
     <div className={cx('reviewListSection')}>
       <p className={cx('reviewCount')}>💬 리뷰 {reviewList.length}</p>
