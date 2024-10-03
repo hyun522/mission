@@ -45,9 +45,11 @@ function Index() {
       [name]: newValue,
     }));
 
-    setIsValid({
-      ...isPasswordValid(password),
-    });
+    if (name === 'password') {
+      setIsValid({
+        ...isPasswordValid(password),
+      });
+    }
 
     setErrorMessage((prevErrorMessage) => {
       const newFormData = { ...formData, [name]: value };
@@ -94,7 +96,6 @@ function Index() {
     });
 
     if (!(data.user?.identities?.length > 0)) {
-      //사용자가 특정 인증 방법으로 이미 등록되어 있는지 확인할 수 있습니다.
       setErrorMessage((prevData) => ({
         ...prevData,
         email: '이미등록된 사용자입니다.',
